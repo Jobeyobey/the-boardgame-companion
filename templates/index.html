@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block scripts %}
+    <script>
+        var req = new XMLHttpRequest();
+        req.open("GET", "http://localhost:8080/https://www.boardgamegeek.com/xmlapi2/thing?id=013", false);
+        req.send(null);
+        console.log(req.responseText);
+    </script>
+{% endblock %}
+
+{% block main %}
+    <h1>My Website Updated</h1>
+    <p id="catanName"></p>
+        
+    <script>
+        var parser, xmlDoc, catanName;
+        var text = req.responseText;
+        
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(text, "text/xml");
+        
+        catanName = document.getElementById("catanName");
+        catanName.innerHTML = xmlDoc.getElementsByTagName("name")[0].getAttribute('value');
+    </script>
+{% endblock %}
