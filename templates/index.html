@@ -6,49 +6,14 @@
 
     <script>
         var req = new XMLHttpRequest();
-        req.open("GET", "http://localhost:8080/https://www.boardgamegeek.com/xmlapi2/search?query=dog", false);
+        req.open("GET", "https://www.boardgamegeek.com/xmlapi2/search?query=cat&type=boardgame,boardgameexpansion", false);
         req.send(null);
     </script>
 
 {% endblock %}
 
 {% block main %}
-    <h1>My Website Updated</h1>
-    <div id="gameNames"></div>
-        
-    <!-- This script could be exported to a JS file? -->
-    <script>
-        var parser, xmlDoc;
-        // Pass response text of request to 'text'
-        var text = req.responseText;
-        
-        // Create a new DOMparser
-        parser = new DOMParser();
-        // Parse the xml text into an xml document
-        xmlDoc = parser.parseFromString(text, "text/xml");
-        console.log(xmlDoc)
 
-        // Get number of items
-        var numberOfNames = xmlDoc.getElementsByTagName("item").length;
-
-        // Create array of the two items
-        var items = xmlDoc.getElementsByTagName("item")
-
-        for(i = 0; i < numberOfNames; i++) {
-            // Create a new <p> tag
-            var tempName = document.createElement("p");
-
-            // Get the primary name of the game
-            var gameName = items[i].getElementsByTagName('name')[0].getAttribute('value');
-
-            // Set contents of <p> tag to game name
-            tempName.innerHTML = (i + 1 + ". ") + gameName;
-
-            // Add <p> tag to the div in body
-            document.getElementById("gameNames").appendChild(tempName);
-        }
-
-        // console.log(items)
-    </script>
+    <!-- Page -->
 
 {% endblock %}
