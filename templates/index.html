@@ -3,17 +3,59 @@
 {% block title %}Index{% endblock %}
 
 {% block scripts %}
-
-    <script>
-        var req = new XMLHttpRequest();
-        req.open("GET", "https://www.boardgamegeek.com/xmlapi2/search?query=cat&type=boardgame,boardgameexpansion", false);
-        req.send(null);
-    </script>
-
+<!-- If POST, request user query from BGG API -->
+    {% if query %}
+        <script>
+            var req = new XMLHttpRequest();
+            // Input query from user into API search string
+            req.open("GET", "https://boardgamegeek.com/xmlapi2/search?type=boardgame&query={{query}}", false);
+            req.send(null);
+        </script>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
+    <!-- Search input -->
+    <form action="/" method="post">
+        <input type="text" name="query" placeholder="Search games...">
+        <button type="submit">Search</button>
+    </form>
 
-    <!-- Page -->
+    <!-- If user has requested a search -->
+    {% if query %}
+    <h1>Results</h1>
+    <div id="gameNames"></div>
+        <script>
+            // Parse the response XML
+            var parser, xmlDoc;
+            var text = req.responseText;
+
+            parser = new DOMParser();
+
+            xmlDoc = parser.parseFromString(text, "text/xml");
+            console.log(xmlDoc)
+
+            // Get the number of matching items
+            var num_games = xmlDoc.getElementsByTagName("item").length;
+            var items = xmlDoc.getElementsByTagName("item");
+
+            // Select prepared gameNames div
+            gameNames = document.getElementById("gameNames");
+
+            // Iterate through list of results, creating a new element for each
+            for (i = 0; i < num_games; i++) {
+                var tempName = document.createElement("p");
+
+                var game = items[i].getElementsByTagName('name')[0].getAttribute('value');
+                var id = items[i].getAttribute('id')
+                console.log(game)
+                console.log(id)
+
+                tempName.innerHTML = "Name: " + game + " id: " + id;
+
+                gameNames.appendChild(tempName)
+            }
+        </script>
+    {% endif %}
 
 {% endblock %}
