@@ -24,7 +24,8 @@
     <!-- If user has requested a search -->
     {% if query %}
     <h1>Results</h1>
-    <div id="gameNames"></div>
+    <ul id="gameNames">
+    </ul>
         <script>
             // Parse the response XML
             var parser, xmlDoc;
@@ -44,16 +45,19 @@
 
             // Iterate through list of results, creating a new element for each
             for (i = 0; i < num_games; i++) {
-                var tempName = document.createElement("p");
+                var tempList = document.createElement("li")
+                gameNames.appendChild(tempList)
+
+                var tempLink = document.createElement("a");
+                tempLink.setAttribute("target", "_blank")
 
                 var game = items[i].getElementsByTagName('name')[0].getAttribute('value');
                 var id = items[i].getAttribute('id')
-                console.log(game)
-                console.log(id)
 
-                tempName.innerHTML = "Name: " + game + " id: " + id;
+                tempLink.innerHTML = game
+                tempLink.setAttribute("href", `https://boardgamegeek.com/boardgame/${id}`)
 
-                gameNames.appendChild(tempName)
+                tempList.appendChild(tempLink)
             }
         </script>
     {% endif %}
