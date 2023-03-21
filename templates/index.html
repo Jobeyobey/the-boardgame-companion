@@ -34,7 +34,7 @@
             parser = new DOMParser();
 
             xmlDoc = parser.parseFromString(text, "text/xml");
-            console.log(xmlDoc)
+            console.log(xmlDoc);
 
             // Get the number of matching items
             var num_games = xmlDoc.getElementsByTagName("item").length;
@@ -49,13 +49,12 @@
                 gameNames.appendChild(tempList)
 
                 var tempLink = document.createElement("a");
-                tempLink.setAttribute("target", "_blank")
 
                 var game = items[i].getElementsByTagName('name')[0].getAttribute('value');
                 var id = items[i].getAttribute('id')
 
                 tempLink.innerHTML = game
-                tempLink.setAttribute("href", `https://boardgamegeek.com/boardgame/${id}`)
+                tempLink.setAttribute("href", `/gamepage?id=${id}`)
 
                 tempList.appendChild(tempLink)
             }
