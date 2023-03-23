@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'inter', sans-serif;
+  background-color: #E1E1E1;
+  margin: 0;
+  padding: 0;
+}
+
+/* Nav Bar */
+
+nav {
+  overflow: hidden;
+  position: fixed;
+  background-color: #1e1e1e;
+  top: 0;
+  width: 100%;
+}
+
+.nav-container {
+  display: flex;
+  margin: auto;
+  max-width: 1200px;
+  justify-content: center;
+  align-items: center;
+}
+
+#dice-logo {
+  max-height: 2.5rem;
+  margin: 0.5rem 2rem 0.5rem 1rem;
+}
+
+#dice-logo:hover {
+  cursor: pointer;
+}
+
+/* Nav Links */
+
+.navlinks-container {
+  display: flex;
+  height: 3.5rem;
+}
+
+.navlink {
+  text-decoration: none;
+  color: white;
+  line-height: 3.5rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.signout {
+  margin-left: auto;
+  margin-top: 0;
+}
+
+.navlink:hover {
+  background-color: #2d2d2d;
+  opacity: 90%;
+  cursor: pointer;
+}
+
+/* Nav Search Bar */
+
+.nav-search {
+  margin-left: 1rem;
+}
+
+.nav-search input {
+  float: left;
+  padding: 0.48rem;
+  border: none;
+  border-radius: 5px 0 0 5px;
+}
+
+.nav-search select {
+  background-color: #EFEFEF;
+  float: left;
+  padding: 0.4rem;
+  border: none;
+}
+
+.nav-search button {
+  background-color: #EFEFEF;
+  float: left;
+  padding: 0.48rem;
+  border: none;
+  border-left: 1px solid #cecece;
+  border-radius: 0 5px 5px 0;
+}
+
+/* Nav Mobile Styling */
+
+.mobile {
+  display: none;
+}
+
+@media (min-width: 969px) {
+  .desktop {
+    display: flex;
+  }
+  .mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 968px) {
+  .desktop {
+    display: none;
+  }
+  .mobile {
+    display: flex;
+  }
+  .nav-container {
+    justify-content: space-between;
+  }
+  #dice-logo {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  .nav-search select {
+    border-radius: 0 5px 5px 0;
+  }
+  .nav-search button {
+    display: none;
+  }
+
+  /* Mobile dropdown functionality */
+
+  .dropdown {
+    overflow: hidden;
+  }
+  .dropdown .dropbtn {
+    border: none;
+    outline: none;
+    color: white;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+  }
+  .dropdown-content {
+    background-color: #3e3e3e;
+    display: none;
+    position: fixed;
+    right: 0;
+    z-index: 1;
+  }
+  .dropdown-content a {
+    display: block;
+    text-align: left;
+  }
+
+  /* Dropdown shop toggle */
+
+  .show {
+    display: block;
+  }
+}
+
+/* Prevent search bar breaking to new line */
+
+@media (max-width: 440px) {
+  .nav-search input {
+    width: 80px;
+  }
+}
