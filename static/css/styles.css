@@ -170,3 +170,12 @@ nav {
     width: 80px;
   }
 }
+
+
+/* Common Page Styles */
+
+.page-container {
+  background-color: white;
+  margin: 3.5rem auto 0 auto;
+  max-width: 1200px;
+  min-height: calc(100vh - 3.5rem);
