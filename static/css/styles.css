@@ -179,3 +179,145 @@ nav {
   margin: 3.5rem auto 0 auto;
   max-width: 1200px;
   min-height: calc(100vh - 3.5rem);
+  padding: 4rem;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-container {
+    padding: 1rem;
+  }
+}
+
+::-webkit-scrollbar {
+  height: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  ::-webkit-scrollbar {
+    height: 0;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Home */
+/* Home Header */
+
+.main-img {
+  max-width: 15rem;
+  height: 100%;
+  margin-right: 4rem;
+  border-radius: 5px;
+}
+
+.profile-head {
+  display: flex;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+}
+
+.profile-username {
+  margin: 0 0 1.5rem 0;
+}
+
+.profile-stats {
+  margin: 0 0 1rem 0;
+}
+
+hr {
+  margin: 2rem 0;
+  border: 2px solid #e1e1e1;
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .profile-head {
+    flex-direction: column;
+    align-items: center;
+  }
+  .main-img {
+    max-width: 15rem;
+    margin: auto;
+  }
+  .profile-username {
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .info-container {
+    gap: 2rem;
+  }
+  hr {
+    margin: 1rem 0rem 1rem -2rem;
+    width: 100vw;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 400px) {
+  .profile-head {
+    font-size: 0.8rem;
+  }
+}
+
+/* Common Feature Styles */
+
+.feature-title {
+  margin-bottom: 0.5rem;
+}
+
+/* Play Log */
+
+.components {
+  display: flex;
+  gap: 1rem;
+  overflow-x: scroll;
+  flex-shrink: 0;
+}
+
+.component-container {
+  background-color: #e1e1e1;
+  min-width: 10rem;
+  padding: 0.1rem;
+  border-radius: 5px;
+}
+
+.component-container img {
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+}
+
+.feature-component-title {
+  margin: 0.5rem;
+}
+
+.feature-component-text {
+  margin: 0.5rem;
+  font-size: 0.8rem;
+}

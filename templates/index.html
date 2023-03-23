@@ -6,5 +6,111 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Page Title</h1>
+    <div class="profile-head">
+        <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
+        <div class="profile-info">
+            <h1 class="profile-username">Username</h1>
+            <div class="info-container">
+                <div class="info-1">
+                    <h4 class="profile-stats">Collection Size: 00</h4>
+                    <h4 class="profile-stats">Game Plays: 00</h4>
+                    <h4 class="profile-stats">Unique Game Plays: 00</h4>
+                </div>
+                <div class="info-2">
+                    <h4 class="profile-stats">Wins: 00</h4>
+                    <h4 class="profile-stats">Losses: 00</h4>
+                    <h4 class="profile-stats">W/L Ratio: 00</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <!-- Play Log -->
+    <div class="feature-row">
+        <h2 class="feature-title">Play Log</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+        </div>
+    </div>
+    <!-- Collection -->
+    <div class="feature-row">
+        <h2 class="feature-title">Collection</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+        </div>
+    </div>
+    <!-- Friends -->
+    <div class="feature-row">
+        <h2 class="feature-title">Friends</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+        </div>
+    </div>
 {% endblock %}
