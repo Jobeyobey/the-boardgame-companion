@@ -4,11 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <title>{% block title %}Default Title{% endblock %}</title>
+    <script>
+    function myFunction() {
+      var x = document.getElementsByClassName("dropdown")[0];
+      if (x.className === "dropdown") {
+        x.className += " responsive";
+      } else {
+        x.className = "dropdown";
+      }
+    }
+    </script>
     {% block scripts %}{% endblock %}
     <!-- <link rel="stylesheet" href="style.css"> -->
   </head>
   <body>
+    <nav>
+      <div class="nav-container desktop">
+        <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+        <div class="navlinks-container">
+            <a class="navlink" href="#">Home</a>
+            <a class="navlink" href="#">Collection</a>
+            <a class="navlink" href="#">Play Log</a>
+            <a class="navlink" href="#">Friends</a>
+        </div>
+        <!-- Search input -->
+        <form class="nav-search" action="/" method="post">
+            <input type="text" name="query" placeholder="Search...">
+            <select name="search-type" id="search-type">
+              <option value="boardgames">Boardgames</option>
+              <option value="users">Users</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+          <a class="navlink signout" href="#">Sign Out</a>
+      </div>
+      <!-- Mobile Navbar -->
+      <div class="nav-container mobile">
+        <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+        <!-- Search input -->
+        <form class="nav-search" action="/" method="post">
+            <input type="text" name="query" placeholder="Search...">
+            <select name="search-type" id="search-type">
+              <option value="boardgames">Boardgames</option>
+              <option value="users">Users</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        <div class="dropdown">
+            <a class="navlink" href="#">Home</a>
+            <a class="navlink" href="#">Collection</a>
+            <a class="navlink" href="#">Play Log</a>
+            <a class="navlink" href="#">Friends</a>
+            <a class="navlink" href="#">Sign Out</a>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+              <svg fill="#ffffff" viewBox="0 0 100 80" width="40" height="40">
+                <rect width="100" height="12" rx="8px"></rect>
+                <rect y="30" width="100" height="12" rx="8px"></rect>
+                <rect y="60" width="100" height="12" rx="8px"></rect>
+              </svg>
+            </a>
+        </div>
+      </div>
+    </nav>
 	  {% block main %}
 
     {% endblock %}
