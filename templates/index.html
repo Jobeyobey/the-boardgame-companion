@@ -15,12 +15,6 @@
 {% endblock %}
 
 {% block main %}
-    <!-- Search input -->
-    <form action="/" method="post">
-        <input type="text" name="query" placeholder="Search games...">
-        <button type="submit">Search</button>
-    </form>
-
     <!-- If user has requested a search -->
     {% if query %}
     <h1>Results</h1>
