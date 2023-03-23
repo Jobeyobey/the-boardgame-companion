@@ -81,4 +81,14 @@
 
     {% endblock %}
   </body>
+  <script>
+    navlinks = document.getElementsByClassName('navlink');
+    for (item in navlinks) {
+      if (window.location.href == navlinks[item].href) {
+        var element = document.getElementsByClassName('navlink')[item];
+        element.classList.add('active');
+        console.log(element)
+      }
+    }
+  </script>
 </html>

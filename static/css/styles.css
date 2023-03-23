@@ -51,13 +51,17 @@ nav {
   padding-left: 1rem;
 }
 
+.active {
+  background-color: #2e2e2e;
+}
+
 .signout {
   margin-left: auto;
   margin-top: 0;
 }
 
 .navlink:hover {
-  background-color: #2d2d2d;
+  background-color: #2e2e2e;
   opacity: 90%;
   cursor: pointer;
 }
