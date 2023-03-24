@@ -16,6 +16,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/collection")
+def collection():
+
+  return render_template("collection.html")
+
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
