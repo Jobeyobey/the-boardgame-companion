@@ -299,11 +299,7 @@ hr {
   margin-bottom: 0.5rem;
 }
 
-.page-title {
-  margin: 0 0 1rem 0;
-}
-
-/* Play Log */
+/* Home Play Log */
 
 .components {
   display: flex;
@@ -331,6 +327,36 @@ hr {
 .feature-component-text {
   margin: 0.5rem;
   font-size: 0.8rem;
+}
+
+/* Common Page Styles */
+
+.page-title {
+  margin: 0;
+}
+
+.alt-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.alt-hr {
+  margin: 1rem 0;
+}
+
+.button {
+  background-color: #41a6a1;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  padding: 1rem;
+  transition-duration: 0.3s;
+}
+
+.button:hover {
+  opacity: 90%;
+  transition-duration: 0.3s;
 }
 
 /* Collection Page */
@@ -367,4 +393,170 @@ hr {
 .tile-title {
   margin: 1rem 0;
   text-align: center;
+}
+
+@media (max-width: 550px) {
+  .collection-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .collection-tile-container img {
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 400px) {
+  .collection-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  .collection-tile-container img {
+    min-width: 120px;
+  }
+}
+
+/* Play Log Page */
+
+.playlog-container {
+  margin-top: 1rem;
+}
+
+.playlog-tile-container {
+  display: grid;
+  grid-template-areas:
+    "img ta tb tc td caret"
+    "img ia ib ic id caret";
+  grid-template-columns: 8rem auto 100px 100px 100px 1fr;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background-color: #e1e1e1;
+  border-radius: 5px;
+  transition-duration: 0.3s;
+}
+
+.playlog-tile-container:hover {
+  cursor: pointer;
+  filter: brightness(105%);
+  transition-duration: 0.3s;
+}
+
+.playlog-tile-container img {
+  grid-area: img;
+  max-height: 8rem;
+  border-radius: 5px 0 0 5px;
+}
+
+.title {
+  align-self: flex-end;
+  margin: 0.2rem 0;
+}
+
+.info {
+  align-self: flex-start;
+  margin: 0.2rem 0;
+}
+
+.ta {
+  grid-area: ta;
+  margin-right: 2rem;
+}
+
+.tb {
+  grid-area: tb;
+}
+
+.tc {
+  grid-area: tc;
+}
+
+.td {
+  grid-area: td;
+}
+
+.ia {
+  grid-area: ia;
+}
+
+.ib {
+  grid-area: ib;
+}
+
+.ic {
+  grid-area: ic;
+}
+
+.id {
+  grid-area: id;
+}
+
+.caret {
+  grid-area: caret;
+  align-self: center;
+  width: 0;
+  height: 0;
+  display: inline-block;
+  border: 1.2rem solid transparent;
+  border-radius: 5px;
+}
+.caret.right{
+  justify-self: end;
+  border-left-color: black;
+}
+
+@media (max-width: 800px) {
+  .playlog-tile-container {
+    grid-template-areas: 
+    "img ta tb tc caret"
+    "img ia ib ic caret";
+    grid-template-columns: 8rem 3fr 100px 100px 1fr;
+  }
+  .td {
+    display: none;
+  }
+  .id {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .playlog-tile-container {
+    grid-template-areas: 
+    "img ta tb caret"
+    "img ia ib caret";
+    grid-template-columns: 8rem 3fr 100px 1fr;
+  }
+  .ta {
+    margin-right: 1rem;
+  }
+  .tc {
+    display: none;
+  }
+  .ic {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .playlog-tile-container {
+    grid-template-areas: 
+    "img ta caret"
+    "img info caret";
+    grid-template-columns: 8rem 3fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .info {
+    grid-area: info;
+    margin: 0;
+  }
+  .tb {
+    display: none;
+  }
+  .ib {
+    display: none;
+  }
+  .caret {
+    border: 1rem solid transparent;
+    border-left-color: black;
+    justify-self: auto;
+  }
 }
