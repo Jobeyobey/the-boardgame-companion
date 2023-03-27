@@ -431,12 +431,23 @@ hr {
 
 /* Friend Accept/Decline Buttons */
 
-.request-tile-container {
+.request-usertile-container {
   max-width: 225px;
   background-color: #e1e1e1;
-  border-radius: 5px;
+  border-radius: 5px 5px 0 0;
   transition-duration: 0.3s;
   flex: 1;
+  padding-bottom: 0.25rem;
+}
+
+.request-usertile-container:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.request-tile-title {
+  margin: 0.5rem 0;
+  text-align: center;
 }
 
 .friend-response-container {

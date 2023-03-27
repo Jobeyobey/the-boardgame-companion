@@ -48,9 +48,11 @@
     <h2 class="page-subtitle">Pending Requests</h2>
     <hr class="alt-hr">
     <div class="tiles">
-        <div class="request-tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Nueve</h5>
+        <div class="request-tile">
+            <div class="request-usertile-container">
+                <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="request-tile-title">Gamer Nueve</h5>
+            </div>
             <div class="friend-response-container">
                 <button type="button" class="friend-response accept" onclick="acceptFunction()">Accept</button>
                 <button type="button" class="friend-response reject" onclick="acceptFunction()">Reject</button>
