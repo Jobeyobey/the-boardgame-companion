@@ -22,6 +22,18 @@ def collection():
   return render_template("collection.html")
 
 
+@app.route("/playlog")
+def playlog():
+
+  return render_template("playlog.html")
+
+
+@app.route("/friends")
+def friends():
+  
+  return render_template("friends.html")
+
+
 @app.route("/search", methods=["GET", "POST"])
 def search():
   #POST

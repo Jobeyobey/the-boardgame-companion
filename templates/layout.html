@@ -35,7 +35,7 @@
               <a class="navlink" href="/">Home</a>
               <a class="navlink" href="/collection">Collection</a>
               <a class="navlink" href="/playlog">Play Log</a>
-              <a class="navlink" href="#">Friends</a>
+              <a class="navlink" href="/friends">Friends</a>
           </div>
           <!-- Search input -->
           <form class="nav-search" action="/search" method="post">
@@ -72,7 +72,7 @@
               <a class="navlink" href="/">Home</a>
               <a class="navlink" href="/collection">Collection</a>
               <a class="navlink" href="/playlog">Play Log</a>
-              <a class="navlink" href="#">Friends</a>
+              <a class="navlink" href="/friends">Friends</a>
               <a class="navlink" href="#">Sign Out</a>
             </div>
           </div>
@@ -87,8 +87,8 @@
       </div>
     </main>
   </body>
-  <!-- Highlights active page in navbar -->
   <script>
+    // Highlight active page in bar
     navlinks = document.getElementsByClassName('navlink');
     for (item in navlinks) {
       if (window.location.href == navlinks[item].href) {

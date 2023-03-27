@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}Your Friends{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}
+
+{% block main %}
+    <div class="alt-head">
+        <h2 class="page-title">Friends</h2>
+        <!-- <a class="button btn-add">Record Session</a> -->
+    </div>
+    <hr class="alt-hr">
+    <div class="tiles">
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Uno</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Dos</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Tres</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Cuatro</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Cinco</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Seis</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Siete</h5>
+        </div>
+        <div class="tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Ocho</h5>
+        </div>
+    </div>
+    <h2 class="page-subtitle">Pending Requests</h2>
+    <hr class="alt-hr">
+    <div class="tiles">
+        <div class="request-tile-container">
+            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+            <h5 class="tile-title">Gamer Nueve</h5>
+            <div class="friend-response-container">
+                <button type="button" class="friend-response accept" onclick="acceptFunction()">Accept</button>
+                <button type="button" class="friend-response reject" onclick="acceptFunction()">Reject</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
