@@ -25,11 +25,11 @@
         // Get results and number of results to loop through
         num_results = xmlDoc.getElementsByTagName("item").length;
         results = xmlDoc.getElementsByTagName("item");
-        
+
         // Prepare ID string to insert into next API search
         var gameApis = [];
         for (let i = 0; i < num_results; i++) {
-            gameApis.push(`https://boardgamegeek.com/xmlapi2/thing?id=${results[i].getAttribute("id")}`);
+            gameApis.push(`https://boardgamegeek.com/xmlapi2/thing?id=${results[i].getAttribute("id")}&stats=1`);
         }
 
         var game_results = []
@@ -49,6 +49,11 @@
                 newParser = new DOMParser();
 
                 newXmlDoc = newParser.parseFromString(newText, "text/xml");
+
+                // Check result is a base boardgame
+                if (newXmlDoc.getElementsByTagName("item")[0].getAttribute("type") != "boardgame") {
+                    continue;
+                }
                 
                 // Push parsed XML to game_results array
                 game_results.push(newXmlDoc);
@@ -63,7 +68,6 @@
                 // Tile container div
                 var tempDiv = document.createElement("div");
                 tempDiv.classList.add("playlog-tile-container");
-                console.log(game);
 
                 // Game image
                 var tempImg = document.createElement("img");
@@ -82,15 +86,18 @@
                 tempInfo1.innerHTML = game.getElementsByTagName("yearpublished")[0].getAttribute("value");
                 tempDiv.appendChild(tempInfo1);
 
-                // Game Main Genre
+                // Game Rating
                 var tempTitle2 = document.createElement("h4");
                 tempTitle2.classList.add("title", "tb")
-                tempTitle2.innerHTML = "Genre";
+                tempTitle2.innerHTML = "Rating";
                 tempDiv.appendChild(tempTitle2);
 
                 var tempInfo2 = document.createElement("p");
                 tempInfo2.classList.add("info", "ib")
-                tempInfo2.innerHTML = game.getElementsByTagName("link")[0].getAttribute("value");
+                stats = game.getElementsByTagName("statistics")[0];
+                ratings = game.getElementsByTagName("ratings")[0];
+                rating = game.getElementsByTagName("average")[0];
+                tempInfo2.innerHTML = Math.round(rating.getAttribute("value") * 10) / 10;
                 tempDiv.appendChild(tempInfo2);
 
                 // Game Playtime
@@ -135,10 +142,6 @@
                 // Append final div to search_results div
                 search_results.appendChild(tempDiv);
             }
-
-            var testP = document.createElement("p");
-            testP.innerHTML = "Test";
-            search_results.appendChild(testP)
         }, 10)
     </script>
     {% endif %}
