@@ -2,57 +2,62 @@
 
 {% block title %}Index{% endblock %}
 
-{% block scripts %}
-<!-- If POST, request user query from BGG API -->
-    {% if query %}
-        <script>
-            var req = new XMLHttpRequest();
-            // Input query from user into API search string
-            req.open("GET", "https://boardgamegeek.com/xmlapi2/search?type=boardgame&query={{query}}", false);
-            req.send(null);
-        </script>
-    {% endif %}
-{% endblock %}
-
 {% block main %}
     <!-- If user has requested a search -->
     {% if query %}
     <h1>Results</h1>
-    <ul id="gameNames">
-    </ul>
-        <script>
-            // Parse the response XML
-            var parser, xmlDoc;
-            var text = req.responseText;
+    <div id="page-content-container">
+    </div>
+    <script>
+        // Input query from user into API
+        var req = new XMLHttpRequest();
+        req.open("GET", "https://boardgamegeek.com/xmlapi2/search?type=boardgame&query={{query}}", false);
+        req.send(null);
 
-            parser = new DOMParser();
+        // Parse XML response
+        var parser, xmlDoc;
+        var text = req.responseText;
 
-            xmlDoc = parser.parseFromString(text, "text/xml");
-            console.log(xmlDoc);
+        parser =  new DOMParser();
 
-            // Get the number of matching items
-            var num_games = xmlDoc.getElementsByTagName("item").length;
-            var items = xmlDoc.getElementsByTagName("item");
+        xmlDoc = parser.parseFromString(text, "text/xml");
 
-            // Select prepared gameNames div
-            gameNames = document.getElementById("gameNames");
+        // Get results and number of results to loop through
+        num_results = xmlDoc.getElementsByTagName("item").length;
+        results = xmlDoc.getElementsByTagName("item");
+        
+        // Prepare ID string to insert into next API search
+        var gameApis = [];
+        for (let i = 0; i < num_results; i++) {
+            gameApis.push(`https://boardgamegeek.com/xmlapi2/thing?id=${results[i].getAttribute("id")}`);
+        }
 
-            // Iterate through list of results, creating a new element for each
-            for (i = 0; i < num_games; i++) {
-                var tempList = document.createElement("li")
-                gameNames.appendChild(tempList)
+        // Give initial API request a moment to return before continuing
+        setTimeout(function(){
+            // Loop through IDs in gameApis. Make an API request for each one, for more detailed info on each game
+            // Too many requests in too short a time will cause BGG to begin rejecting requests. I should create pages for every 10 results. Error code 429 = too many requests
+            for (let i = 0; (i < gameApis.length) && (i < 10); i++) {
+            var newReq = new XMLHttpRequest();
+            newReq.open("GET", `${gameApis[i]}`, false)
+            newReq.send(null)
 
-                var tempLink = document.createElement("a");
+            var newParser, newXmlDoc;
+            var newText = newReq.responseText;
 
-                var game = items[i].getElementsByTagName('name')[0].getAttribute('value');
-                var id = items[i].getAttribute('id')
+            newParser = new DOMParser();
 
-                tempLink.innerHTML = game
-                tempLink.setAttribute("href", `/gamepage?id=${id}`)
-
-                tempList.appendChild(tempLink)
-            }
-        </script>
+            newXmlDoc = newParser.parseFromString(newText, "text/xml");
+            console.log(newXmlDoc);
+            };
+        }, 100)
+        
+        // Select prepared search-results div
+        search_results = document.getElementById("page-content-container");
+        
+        var testP = document.createElement("p");
+        testP.innerHTML = "Test";
+        search_results.appendChild(testP)
+    </script>
     {% endif %}
 
 {% endblock %}
