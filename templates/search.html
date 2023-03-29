@@ -32,32 +32,114 @@
             gameApis.push(`https://boardgamegeek.com/xmlapi2/thing?id=${results[i].getAttribute("id")}`);
         }
 
-        // Give initial API request a moment to return before continuing
+        var game_results = []
+
+        // Wrap in setTimeout(10) to give initial API request a moment to return before continuing
         setTimeout(function(){
             // Loop through IDs in gameApis. Make an API request for each one, for more detailed info on each game
             // Too many requests in too short a time will cause BGG to begin rejecting requests. I should create pages for every 10 results. Error code 429 = too many requests
             for (let i = 0; (i < gameApis.length) && (i < 10); i++) {
-            var newReq = new XMLHttpRequest();
-            newReq.open("GET", `${gameApis[i]}`, false)
-            newReq.send(null)
+                var newReq = new XMLHttpRequest();
+                newReq.open("GET", `${gameApis[i]}`, false)
+                newReq.send(null)
 
-            var newParser, newXmlDoc;
-            var newText = newReq.responseText;
+                var newParser, newXmlDoc;
+                var newText = newReq.responseText;
 
-            newParser = new DOMParser();
+                newParser = new DOMParser();
 
-            newXmlDoc = newParser.parseFromString(newText, "text/xml");
-            console.log(newXmlDoc);
+                newXmlDoc = newParser.parseFromString(newText, "text/xml");
+                
+                // Push parsed XML to game_results array
+                game_results.push(newXmlDoc);
             };
-        }, 100)
         
-        // Select prepared search-results div
-        search_results = document.getElementById("page-content-container");
-        
-        var testP = document.createElement("p");
-        testP.innerHTML = "Test";
-        search_results.appendChild(testP)
+            // Select prepared search-results div
+            search_results = document.getElementById("page-content-container");
+            
+            // Loop through game results
+            // Create and append a tile to page-content-container for each game
+            for (game of game_results) {
+                // Tile container div
+                var tempDiv = document.createElement("div");
+                tempDiv.classList.add("playlog-tile-container");
+                console.log(game);
+
+                // Game image
+                var tempImg = document.createElement("img");
+                var image = game.getElementsByTagName("image")[0].innerHTML;
+                tempImg.setAttribute("src", `${image}`)
+                tempDiv.appendChild(tempImg);
+
+                // Game title
+                var tempTitle1 = document.createElement("h4");
+                tempTitle1.classList.add("title", "ta")
+                tempTitle1.innerHTML = game.getElementsByTagName("name")[0].getAttribute("value");
+                tempDiv.appendChild(tempTitle1);
+
+                var tempInfo1 = document.createElement("p");
+                tempInfo1.classList.add("info", "ia")
+                tempInfo1.innerHTML = game.getElementsByTagName("yearpublished")[0].getAttribute("value");
+                tempDiv.appendChild(tempInfo1);
+
+                // Game Main Genre
+                var tempTitle2 = document.createElement("h4");
+                tempTitle2.classList.add("title", "tb")
+                tempTitle2.innerHTML = "Genre";
+                tempDiv.appendChild(tempTitle2);
+
+                var tempInfo2 = document.createElement("p");
+                tempInfo2.classList.add("info", "ib")
+                tempInfo2.innerHTML = game.getElementsByTagName("link")[0].getAttribute("value");
+                tempDiv.appendChild(tempInfo2);
+
+                // Game Playtime
+                var tempTitle3 = document.createElement("h4");
+                tempTitle3.classList.add("title", "tc")
+                tempTitle3.innerHTML = "Playtime";
+                tempDiv.appendChild(tempTitle3);
+
+                var tempInfo3 = document.createElement("p");
+                tempInfo3.classList.add("info", "ic")
+                var minTime = game.getElementsByTagName("minplaytime")[0].getAttribute("value");
+                var maxTime = game.getElementsByTagName("maxplaytime")[0].getAttribute("value");
+                if (minTime == maxTime || minTime == 0 || maxTime == 0) {
+                    tempInfo3.innerHTML = `${minTime} mins`;
+                } else {
+                    tempInfo3.innerHTML = `${minTime} - ${maxTime} mins`;
+                }
+                tempDiv.appendChild(tempInfo3);
+
+                // Game Player Count
+                var tempTitle4 = document.createElement("h4");
+                tempTitle4.classList.add("title", "td")
+                tempTitle4.innerHTML = "Players";
+                tempDiv.appendChild(tempTitle4);
+
+                var tempInfo4 = document.createElement("p");
+                tempInfo4.classList.add("info", "id")
+                var minPlayers = game.getElementsByTagName("minplayers")[0].getAttribute("value");
+                var maxPlayers = game.getElementsByTagName("maxplayers")[0].getAttribute("value");
+                if (minPlayers != maxPlayers) {
+                    tempInfo4.innerHTML = `${minPlayers} - ${maxPlayers}`;
+                } else {
+                    tempInfo4.innerHTML = `${minPlayers}`;
+                }
+                tempDiv.appendChild(tempInfo4);
+
+                // Caret
+                var tempCaret = document.createElement("span");
+                tempCaret.classList.add("caret", "right");
+                tempDiv.appendChild(tempCaret);
+
+                // Append final div to search_results div
+                search_results.appendChild(tempDiv);
+            }
+
+            var testP = document.createElement("p");
+            testP.innerHTML = "Test";
+            search_results.appendChild(testP)
+        }, 10)
     </script>
     {% endif %}
-
 {% endblock %}
