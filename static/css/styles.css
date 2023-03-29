@@ -483,6 +483,11 @@ hr {
 
 /* Play Log Page */
 
+.playlog-link {
+  text-decoration: none;
+  color: black;
+}
+
 .playlog-tile-container {
   display: grid;
   grid-template-areas:

@@ -65,6 +65,12 @@
             // Loop through game results
             // Create and append a tile to page-content-container for each game
             for (game of game_results) {
+                // Anchor tag for link to game page
+                var gameLink = document.createElement("a");
+                gameLink.classList.add("playlog-link");
+                id = game.getElementsByTagName("item")[0].getAttribute("id");
+                gameLink.setAttribute("href", `/gamepage?id=${id}`)
+
                 // Tile container div
                 var tempDiv = document.createElement("div");
                 tempDiv.classList.add("playlog-tile-container");
@@ -140,7 +146,8 @@
                 tempDiv.appendChild(tempCaret);
 
                 // Append final div to search_results div
-                search_results.appendChild(tempDiv);
+                gameLink.appendChild(tempDiv);
+                search_results.appendChild(gameLink);
             }
         }, 10)
     </script>
