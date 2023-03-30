@@ -7,14 +7,42 @@
     <script>
         var req = new XMLHttpRequest();
         // Input query from user into API search string
-        req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{id}}", false);
+        req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{id}}&stats=1", false);
         req.send(null);
+        // Function to convert HTML unicode characters
+        function HTMLconvert(str)
+            {
+            str = str.replace(/&amp;#10;/g, "<br>");
+            str = str.replace(/&amp;quot;/g, '"');
+            return str;
+            }
     </script>
 {% endblock %}
 
 {% block main %}
-    <h1 id="gameTitle"></h1>
-    <a href="/">Return to homepage</a>
+    <div class="header">
+        <img id="game-img" class="main-img">
+        <div class="header-info">
+            <h1 id="gameName" class="head-name">Game Name</h1>
+            <div class="game-info-container">
+                <div class="info-1">
+                    <p id="rating" class="header-stats">Rating:</p>
+                    <p id="players" class="header-stats">Players:</p>
+                    <p id="playtime" class="header-stats">Playtime:</p>
+                </div>
+                <button id="add-game" class="button btn-add btn-strong">Add to collection</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div>
+        <h2 class="feature-title">Description</h2>
+        <p id="description">Loading...</p>
+    </div>
+    <hr>
+    <div>
+        <h2 class="feature-title">Friends who own this game</h2>
+    </div>
     <script>
         // Parse XMLDoc
         var parser, xmlDoc;
@@ -26,9 +54,54 @@
         boardGame = xmlDoc.getElementById({{id}});
         console.log(boardGame)
 
-        // Isolate gameTitle elements
-        var gameTitleElement = document.getElementById("gameTitle");
-        var gameTitle = boardGame.getElementsByTagName("name")[0].getAttribute("value");
-        gameTitleElement.innerHTML = gameTitle;
+        // Game Image
+        var image = boardGame.getElementsByTagName("image")[0].innerHTML;
+        var imageElement = document.getElementById("game-img");
+        imageElement.setAttribute("src", image);
+
+        // Game Name
+        var name = boardGame.getElementsByTagName("name")[0]
+            .getAttribute("value");
+        var nameElement = document.getElementById("gameName");
+        gameName.innerHTML = name;
+
+        // Rating
+        var rating = boardGame.getElementsByTagName("statistics")[0]
+            .getElementsByTagName("ratings")[0]
+            .getElementsByTagName("average")[0]
+            .getAttribute("value");
+        var ratingElement = document.getElementById("rating");
+        ratingElement.innerHTML = `${ratingElement.innerHTML} ${Math.round(rating * 10) / 10} / 10`;
+
+        // Players
+        var minPlayers = boardGame.getElementsByTagName("minplayers")[0]
+            .getAttribute("value");
+        var maxPlayers = boardGame.getElementsByTagName("maxplayers")[0]
+            .getAttribute("value");
+        var playersElement = document.getElementById("players");
+        if (minPlayers == maxPlayers || minPlayers == 0 || maxPlayers == 0) {
+            playersElement.innerHTML = `${playersElement.innerHTML} ${minPlayers}`;
+        } else {
+            playersElement.innerHTML = `${playersElement.innerHTML} ${minPlayers} - ${maxPlayers}`;
+        }
+
+        // Playtime
+        var minTime = boardGame.getElementsByTagName("minplaytime")[0]
+            .getAttribute("value");
+        var maxTime = boardGame.getElementsByTagName("maxplaytime")[0]
+            .getAttribute("value");
+        var timeElement = document.getElementById("playtime");
+        if (minTime == maxTime || minTime == 0 || maxTime == 0) {
+            timeElement.innerHTML = `${timeElement.innerHTML} ${minTime} mins`;
+        } else {
+            timeElement.innerHTML = `${timeElement.innerHTML} ${minTime} - ${maxTime} mins`;
+        }
+
+        // Description
+        var description = boardGame.getElementsByTagName("description")[0]
+            .innerHTML;
+        description = HTMLconvert(description);
+        var descriptionElement = document.getElementById("description");
+        descriptionElement.innerHTML = description;
     </script>
 {% endblock %}

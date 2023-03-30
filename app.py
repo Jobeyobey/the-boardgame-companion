@@ -40,8 +40,13 @@ def search():
   if request.method == "POST":
     # Get user query
     query = request.form.get("query")
+    print(query)
     
     return render_template("search.html", query=query)
+  
+  #GET
+  redirect("/")
+  
 
   
 @app.route("/gamepage")

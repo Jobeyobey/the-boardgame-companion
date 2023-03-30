@@ -227,8 +227,8 @@ nav {
   background: #555;
 }
 
-/* Home */
-/* Home Header */
+/* Home & Game Page */
+/* Header */
 
 .main-img {
   max-width: 15rem;
@@ -237,13 +237,18 @@ nav {
   border-radius: 5px;
 }
 
-.profile-head {
+.header {
   display: flex;
 }
 
-.profile-info {
+.head-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+.head-username {
+  text-align: center;
 }
 
 .info-container {
@@ -252,11 +257,17 @@ nav {
   gap: 4rem;
 }
 
-.profile-username {
+.game-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.head-name {
   margin: 0 0 1.5rem 0;
 }
 
-.profile-stats {
+.head-stats {
   margin: 0 0 1rem 0;
 }
 
@@ -267,7 +278,7 @@ hr {
 }
 
 @media (max-width: 768px) {
-  .profile-head {
+  .header {
     flex-direction: column;
     align-items: center;
   }
@@ -275,12 +286,18 @@ hr {
     max-width: 15rem;
     margin: auto;
   }
-  .profile-username {
-    margin: 1.5rem 0;
+  .head-name {
+    margin: 1.5rem 0 0 0;
     text-align: center;
   }
   .info-container {
     gap: 2rem;
+  }
+  .info-1 {
+    text-align: center;
+  }
+  #add-game {
+    margin: auto;
   }
   hr {
     margin: 1rem 0rem 1rem -2rem;
@@ -290,7 +307,7 @@ hr {
 }
 
 @media (max-width: 400px) {
-  .profile-head {
+  .header {
     font-size: 0.8rem;
   }
 }
@@ -363,6 +380,7 @@ hr {
 
 .button {
   background-color: #41a6a1;
+  border: none;
   border-radius: 5px;
   color: white;
   cursor: pointer;
@@ -370,9 +388,20 @@ hr {
   transition-duration: 0.3s;
 }
 
+.btn-strong {
+  font-family: "inter", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
 .button:hover {
   opacity: 90%;
   transition-duration: 0.3s;
+}
+
+.tile-link-decoration {
+  text-decoration: none;
+  color: black;
 }
 
 /* Collection Page and Friends Page */
@@ -483,12 +512,7 @@ hr {
 
 /* Play Log Page */
 
-.playlog-link {
-  text-decoration: none;
-  color: black;
-}
-
-.playlog-tile-container {
+.hr-tile-container {
   display: grid;
   grid-template-areas:
     "img ta tb tc td caret"
@@ -504,13 +528,13 @@ hr {
   transition-duration: 0.3s;
 }
 
-.playlog-tile-container:hover {
+.hr-tile-container:hover {
   cursor: pointer;
   filter: brightness(105%);
   transition-duration: 0.3s;
 }
 
-.playlog-tile-container img {
+.hr-tile-container img {
   grid-area: img;
   justify-self: center;
   align-self: center;
@@ -581,7 +605,7 @@ hr {
 }
 
 @media (max-width: 800px) {
-  .playlog-tile-container {
+  .hr-tile-container {
     grid-template-areas: 
     "img ta tb tc caret"
     "img ia ib ic caret";
@@ -596,7 +620,7 @@ hr {
 }
 
 @media (max-width: 680px) {
-  .playlog-tile-container {
+  .hr-tile-container {
     grid-template-areas: 
     "img ta tb caret"
     "img ia ib caret";
@@ -614,7 +638,7 @@ hr {
 }
 
 @media (max-width: 540px) {
-  .playlog-tile-container {
+  .hr-tile-container {
     grid-template-areas: 
     "img ta caret"
     "img info caret";
