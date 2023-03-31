@@ -38,3 +38,29 @@ Create a board-game collection app, where you can:
 #### BGG API
 I've got the BGG API working on my computer, however for more flexibility I should look into webscraping
 Resources here: https://boardgamegeek.com/thread/687565/pull-down-top-100-games-through-bgg-api
+
+
+### Database Needed
+
+#### Track individual user accounts
+Users:
+id | username | password
+
+#### Track user collection using userID's and BGG game ID's.
+#### Seeing as I can only make 10-15 requests at a time, I will either have to make multiple pages, or I could create
+#### a database that collects image URL's and gamenames, so before making an API request, I could simply
+#### search the database first, to potentially save time.
+collection:
+id | userid | gameid
+
+#### Table to track individual user play log
+playlog:
+id | userid | gameid | result | time | note
+
+#### Table to track friend status. Userid1 will always be the 'requestee', for knowing who initiated the request
+friends:
+id | userid1 | userid2 |status
+
+#### Possible table to cache game images and names to limit API calls
+cache:
+gameid | image | name
