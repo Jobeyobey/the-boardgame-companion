@@ -1,58 +1,116 @@
 {% extends "layout.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block scripts %}
-<!-- If POST, request user query from BGG API -->
-    {% if query %}
-        <script>
-            var req = new XMLHttpRequest();
-            // Input query from user into API search string
-            req.open("GET", "https://boardgamegeek.com/xmlapi2/search?type=boardgame&query={{query}}", false);
-            req.send(null);
-        </script>
-    {% endif %}
 {% endblock %}
 
 {% block main %}
-    <!-- If user has requested a search -->
-    {% if query %}
-    <h1>Results</h1>
-    <ul id="gameNames">
-    </ul>
-        <script>
-            // Parse the response XML
-            var parser, xmlDoc;
-            var text = req.responseText;
-
-            parser = new DOMParser();
-
-            xmlDoc = parser.parseFromString(text, "text/xml");
-            console.log(xmlDoc);
-
-            // Get the number of matching items
-            var num_games = xmlDoc.getElementsByTagName("item").length;
-            var items = xmlDoc.getElementsByTagName("item");
-
-            // Select prepared gameNames div
-            gameNames = document.getElementById("gameNames");
-
-            // Iterate through list of results, creating a new element for each
-            for (i = 0; i < num_games; i++) {
-                var tempList = document.createElement("li")
-                gameNames.appendChild(tempList)
-
-                var tempLink = document.createElement("a");
-
-                var game = items[i].getElementsByTagName('name')[0].getAttribute('value');
-                var id = items[i].getAttribute('id')
-
-                tempLink.innerHTML = game
-                tempLink.setAttribute("href", `/gamepage?id=${id}`)
-
-                tempList.appendChild(tempLink)
-            }
-        </script>
-    {% endif %}
-
+    <div class="header">
+        <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
+        <div class="head-info">
+            <h1 class="head-username">Username</h1>
+            <div class="info-container">
+                <div class="info-1">
+                    <h4 class="head-stats">Collection Size: 00</h4>
+                    <h4 class="head-stats">Game Plays: 00</h4>
+                    <h4 class="head-stats">Unique Game Plays: 00</h4>
+                </div>
+                <div class="info-2">
+                    <h4 class="head-stats">Wins: 00</h4>
+                    <h4 class="head-stats">Losses: 00</h4>
+                    <h4 class="head-stats">W/L Ratio: 00</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <!-- Play Log -->
+    <div class="feature-row">
+        <h2 class="feature-title">Play Log</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+                <p class="feature-component-text">Played: 1 day ago</p>
+                <p class="feature-component-text">Result: Win</p>
+            </div>
+        </div>
+    </div>
+    <!-- Collection -->
+    <div class="feature-row">
+        <h2 class="feature-title">Collection</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+        </div>
+    </div>
+    <!-- Friends -->
+    <div class="feature-row">
+        <h2 class="feature-title">Friends</h2>
+        <div class="components">
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+            <div class="component-container">
+                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="feature-component-title">Spirit Island</h5>
+            </div>
+        </div>
+    </div>
 {% endblock %}

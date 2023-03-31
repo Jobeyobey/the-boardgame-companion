@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <title>{% block title %}Default Title{% endblock %}</title>
     {% block scripts %}{% endblock %}
     <script>
@@ -26,68 +29,74 @@
     </script>
   </head>
   <body>
-    <nav>
-      <!-- Desktop navbar -->
-      <div class="nav-container desktop">
-        <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
-        <div class="navlinks-container">
-            <a class="navlink" href="/">Home</a>
-            <a class="navlink" href="#">Collection</a>
-            <a class="navlink" href="#">Play Log</a>
-            <a class="navlink" href="#">Friends</a>
+    <header>
+      <nav>
+        <!-- Desktop navbar -->
+        <div class="nav-container desktop">
+          <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+          <div class="navlinks-container">
+              <a class="navlink" href="/">Home</a>
+              <a class="navlink" href="/collection">Collection</a>
+              <a class="navlink" href="/playlog">Play Log</a>
+              <a class="navlink" href="/friends">Friends</a>
+          </div>
+          <!-- Search input -->
+          <form class="nav-search" action="/search" method="post">
+              <input type="text" name="query" placeholder="Search...">
+              <select name="search-type" id="search-type">
+                <option value="boardgames">Boardgames</option>
+                <option value="users">Users</option>
+              </select>
+              <button type="submit">Search</button>
+          </form>
+            <a class="navlink signout" href="#">Sign Out</a>
         </div>
-        <!-- Search input -->
-        <form class="nav-search" action="/" method="post">
-            <input type="text" name="query" placeholder="Search...">
-            <select name="search-type" id="search-type">
-              <option value="boardgames">Boardgames</option>
-              <option value="users">Users</option>
-            </select>
-            <button type="submit">Search</button>
-        </form>
-          <a class="navlink signout" href="#">Sign Out</a>
-      </div>
-      <!-- Mobile Navbar -->
-      <div class="nav-container mobile">
-        <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
-        <!-- Search input -->
-        <form class="nav-search" action="/" method="post">
-            <input type="text" name="query" placeholder="Search...">
-            <select name="search-type" id="search-type">
-              <option value="boardgames">Boardgames</option>
-              <option value="users">Users</option>
-            </select>
-            <button type="submit">Search</button>
-        </form>
-        <div class="dropdown">
-          <button onclick="dropdownClick()" class="dropbtn">
-            <svg class="dropbtn" fill="#ffffff" viewBox="0 0 100 80" width="40" height="40">
-              <rect class="dropbtn" width="100" height="12" rx="8px"></rect>
-              <rect class="dropbtn" y="30" width="100" height="12" rx="8px"></rect>
-              <rect class="dropbtn" y="60" width="100" height="12" rx="8px"></rect>
-            </svg>
-          </button>
-          <div id="dropdown" class="dropdown-content">
-            <a class="navlink" href="/">Home</a>
-            <a class="navlink" href="#">Collection</a>
-            <a class="navlink" href="#">Play Log</a>
-            <a class="navlink" href="#">Friends</a>
-            <a class="navlink" href="#">Sign Out</a>
+        <!-- Mobile Navbar -->
+        <div class="nav-container mobile">
+          <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+          <!-- Search input -->
+          <form class="nav-search" action="/search" method="post">
+              <input type="text" name="query" placeholder="Search...">
+              <select name="search-type" id="search-type">
+                <option value="boardgames">Boardgames</option>
+                <option value="users">Users</option>
+              </select>
+              <button type="submit">Search</button>
+          </form>
+          <div class="dropdown">
+            <button onclick="dropdownClick()" class="dropbtn">
+              <svg class="dropbtn" fill="#ffffff" viewBox="0 0 100 80" width="40" height="40">
+                <rect class="dropbtn" width="100" height="12" rx="8px"></rect>
+                <rect class="dropbtn" y="30" width="100" height="12" rx="8px"></rect>
+                <rect class="dropbtn" y="60" width="100" height="12" rx="8px"></rect>
+              </svg>
+            </button>
+            <div id="dropdown" class="dropdown-content">
+              <a class="navlink" href="/">Home</a>
+              <a class="navlink" href="/collection">Collection</a>
+              <a class="navlink" href="/playlog">Play Log</a>
+              <a class="navlink" href="/friends">Friends</a>
+              <a class="navlink" href="#">Sign Out</a>
+            </div>
           </div>
         </div>
+      </nav>
+    </header>
+    <main>
+      <div class="page-container">
+        {% block main %}
+    
+        {% endblock %}  
       </div>
-    </nav>
-	  {% block main %}
-
-    {% endblock %}
+    </main>
   </body>
   <script>
+    // Highlight active page in bar
     navlinks = document.getElementsByClassName('navlink');
     for (item in navlinks) {
       if (window.location.href == navlinks[item].href) {
         var element = document.getElementsByClassName('navlink')[item];
         element.classList.add('active');
-        console.log(element)
       }
     }
   </script>
