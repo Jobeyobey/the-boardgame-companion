@@ -1,6 +1,41 @@
 from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
 
 app = Flask(__name__)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+  # GET
+  if request.method == "GET":
+    return render_template("login.html")
+  
+  # POST
+  if request.method == "POST":
+
+    # Connect to sqlite database
+    connection = sqlite3.connect("bgcomp.db")
+    db = connection.cursor()
+    print ("Database Connected")
+
+    # Prepare insert statement and data
+    username = request.form.get("username")
+    password = request.form.get("password")
+    data = (username, password)
+    insert_statement = (
+      "INSERT INTO users (username, hash) VALUES (?, ?)"
+    )
+
+    # Insert data
+    db.execute(insert_statement, data)
+
+    # Commit database changes
+    connection.commit()
+
+    # Close database cursor and connection
+    db.close()
+    connection.close()
+
+    return redirect("/")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
