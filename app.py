@@ -11,24 +11,63 @@ app.config['SECRET_KEY'] = 'mysecret'
 app.config['SESSION_TYPE'] = "filesystem"
 Session(app)
 
+@app.route("/signout")
+def signout():
+  session.clear()
+  return redirect("/login")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
-  # Clear session
-  session.clear()
 
-  # GET
-  if request.method == "GET":
-    return render_template("login.html")
-  
   # POST
   if request.method == "POST":
 
     # Connect to sqlite database
     connection = sqlite3.connect("bgcomp.db")
     db = connection.cursor()
-    print ("Database Connected")
 
     # Prepare insert statement and data
+    username = request.form.get("username")
+    password = request.form.get("password")
+    insert_statement = (
+      "SELECT username, hash FROM users WHERE username = ?"
+    )
+
+    # Insert data
+    user = db.execute(insert_statement, (username,)).fetchall()
+
+    # Check user exists
+    if user == []:
+      print("FLASH SHOULD APPEAR")
+      flash("Username or password incorrect")
+      return redirect(url_for("login"))
+
+    # Close database cursor and connection
+    db.close()
+    connection.close()
+
+    session['username'] = username
+    flash("Logged in")
+
+    return redirect("/")
+
+  # GET
+  if request.method == "GET":
+    return render_template("login.html")
+  
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+  # POST
+  if request.method == "POST":
+
+    # Connect to sqlite database
+    connection = sqlite3.connect("bgcomp.db")
+    db = connection.cursor()
+
+    # Prepare statement and data
     username = request.form.get("username")
     password = request.form.get("password")
     data = (username, password)
@@ -48,7 +87,10 @@ def login():
 
     session['username'] = username
 
-    return redirect("/")
+    return redirect("/login")
+  
+  return render_template("register.html")
+
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
