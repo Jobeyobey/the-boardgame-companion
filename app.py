@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
+from helpers import login_required
 import os
 import sqlite3
 
@@ -50,6 +51,7 @@ def login():
     return redirect("/")
 
 @app.route("/", methods=["GET", "POST"])
+@login_required
 def index():
   # GET
   if request.method == "GET":
@@ -64,24 +66,28 @@ def index():
 
 
 @app.route("/collection")
+@login_required
 def collection():
 
   return render_template("collection.html")
 
 
 @app.route("/playlog")
+@login_required
 def playlog():
 
   return render_template("playlog.html")
 
 
 @app.route("/friends")
+@login_required
 def friends():
   
   return render_template("friends.html")
 
 
 @app.route("/search", methods=["GET", "POST"])
+@login_required
 def search():
   #POST
   if request.method == "POST":
@@ -97,6 +103,7 @@ def search():
 
   
 @app.route("/gamepage")
+@login_required
 def gamepage():
   # Get requested game id from URL query
   id = request.args['id']

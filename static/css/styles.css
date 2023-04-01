@@ -308,9 +308,6 @@ hr {
   .info-1 {
     text-align: center;
   }
-  #add-game {
-    margin: auto;
-  }
   hr {
     margin: 1rem 0rem 1rem -2rem;
     width: 100vw;
@@ -404,6 +401,16 @@ hr {
   font-family: "inter", sans-serif;
   font-weight: 500;
   font-size: 1rem;
+}
+
+#add-game {
+  margin: auto auto auto 0;
+}
+
+@media (max-width: 768px) {
+  #add-game {
+    margin: auto;
+  }
 }
 
 .button:hover {
