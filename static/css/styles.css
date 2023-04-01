@@ -244,11 +244,6 @@ nav {
 .head-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-.head-username {
-  text-align: center;
 }
 
 .info-container {
@@ -285,6 +280,9 @@ hr {
   .main-img {
     max-width: 15rem;
     margin: auto;
+  }
+  .head-username {
+    text-align: center;
   }
   .head-name {
     margin: 1.5rem 0 0 0;
