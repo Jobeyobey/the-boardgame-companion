@@ -46,7 +46,7 @@ Resources here: https://boardgamegeek.com/thread/687565/pull-down-top-100-games-
 - Users:
 - - id | username | password
 
-#### Track user collection using userID's and BGG game ID's. Seeing as I can only make 10-15 requests at a time, I will either have to make multiple pages, or I could create a database that collects image URL's and gamenames, so before making an API request, I could simply search the database first, to potentially save time.
+#### Track user collection using userID's and BGG game ID's. Seeing as I can only make 10-15 requests at a time, I will either have to make multiple pages, or I could create a database that collects image URL's and gamenames, so before making an API request, I could simply search the database first, to potentially save time as well as displaying all collection games.
 - collection:
 - - id | userid | gameid
 

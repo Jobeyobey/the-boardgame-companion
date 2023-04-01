@@ -1,10 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_session import Session
+import os
 import sqlite3
 
 app = Flask(__name__)
 
+# Session configuration
+app.config['SECRET_KEY'] = 'mysecret'
+app.config['SESSION_TYPE'] = "filesystem"
+Session(app)
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
+  # Clear session
+  session.clear()
+
   # GET
   if request.method == "GET":
     return render_template("login.html")
@@ -34,6 +44,8 @@ def login():
     # Close database cursor and connection
     db.close()
     connection.close()
+
+    session['username'] = username
 
     return redirect("/")
 
