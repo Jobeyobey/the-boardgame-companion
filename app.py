@@ -39,8 +39,12 @@ def login():
 
     # Check user exists
     if user == []:
-      print("FLASH SHOULD APPEAR")
-      flash("Username or password incorrect")
+      flash("Username or password incorrect (username)")
+      return redirect(url_for("login"))
+    
+    # Check password is correct
+    if user[0][1] != password:
+      flash("Username or password incorrect (password)")
       return redirect(url_for("login"))
 
     # Close database cursor and connection
@@ -54,6 +58,11 @@ def login():
 
   # GET
   if request.method == "GET":
+
+    # If user is logged in, go to index
+    if session.get('username') is not None:
+      return redirect(url_for("index"))
+    
     return render_template("login.html")
   
 
@@ -65,17 +74,29 @@ def register():
 
     # Connect to sqlite database
     connection = sqlite3.connect("bgcomp.db")
+    connection.row_factory = sqlite3.Row
     db = connection.cursor()
 
-    # Prepare statement and data
+    # Prepare data
     username = request.form.get("username")
     password = request.form.get("password")
     data = (username, password)
+
+    # Check if username is taken
+    select_statement = (
+      "SELECT username FROM users WHERE username = (?)"
+    )
+    user_check = db.execute(select_statement, (username,)).fetchall()
+    if user_check is not None:
+      db.close()
+      connection.close()
+      flash("Username taken")
+      return redirect(url_for("register"))
+
+    # Insert user into database
     insert_statement = (
       "INSERT INTO users (username, hash) VALUES (?, ?)"
     )
-
-    # Insert data
     db.execute(insert_statement, data)
 
     # Commit database changes
@@ -89,6 +110,7 @@ def register():
 
     return redirect("/login")
   
+  # GET
   return render_template("register.html")
 
 
