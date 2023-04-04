@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
-from helpers import login_required
+from helpers import login_required, open_db, close_db, validate_username, validate_password
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
 
 app = Flask(__name__)
 
 # Session configuration
-app.config['SECRET_KEY'] = 'mysecret'
+app.config['SECRET_KEY'] = os.urandom(12)
 app.config['SESSION_TYPE'] = "filesystem"
 Session(app)
 
@@ -24,8 +25,7 @@ def login():
   if request.method == "POST":
 
     # Connect to sqlite database
-    connection = sqlite3.connect("bgcomp.db")
-    db = connection.cursor()
+    connection, db = open_db()
 
     # Prepare insert statement and data
     username = request.form.get("username")
@@ -39,17 +39,16 @@ def login():
 
     # Check user exists
     if user == []:
-      flash("Username or password incorrect (username)")
+      flash("Username or password incorrect")
       return redirect(url_for("login"))
     
     # Check password is correct
-    if user[0][1] != password:
-      flash("Username or password incorrect (password)")
+    if not check_password_hash(user[0]['hash'], password):
+      flash("Username or password incorrect")
       return redirect(url_for("login"))
 
     # Close database cursor and connection
-    db.close()
-    connection.close()
+    close_db(connection, db)
 
     session['username'] = username
     flash("Logged in")
@@ -73,25 +72,35 @@ def register():
   if request.method == "POST":
 
     # Connect to sqlite database
-    connection = sqlite3.connect("bgcomp.db")
-    connection.row_factory = sqlite3.Row
-    db = connection.cursor()
+    connection, db = open_db()
 
-    # Prepare data
+    # Retrieve user/password from registration form
     username = request.form.get("username")
     password = request.form.get("password")
-    data = (username, password)
+
+    # Check username and password are valid
+    if validate_username(username):
+      flash("Username must be 3-20 characters. Alphanumeric and spaces only. Must not start or end with a space.")
+      return redirect(url_for("register"))
+    
+    if validate_password(password, request.form.get("confirm")):
+      flash("Password must be 8-50 characters. Cannot contain * : ' \"")
+      return redirect(url_for("register"))
 
     # Check if username is taken
     select_statement = (
       "SELECT username FROM users WHERE username = (?)"
     )
     user_check = db.execute(select_statement, (username,)).fetchall()
-    if user_check is not None:
+    if user_check:
       db.close()
       connection.close()
       flash("Username taken")
       return redirect(url_for("register"))
+    
+    # Generate hash and data to insert into db
+    hash = generate_password_hash(password)
+    data = (username, hash)
 
     # Insert user into database
     insert_statement = (
@@ -99,12 +108,9 @@ def register():
     )
     db.execute(insert_statement, data)
 
-    # Commit database changes
+    # Commit to and close database
     connection.commit()
-
-    # Close database cursor and connection
-    db.close()
-    connection.close()
+    close_db(connection, db)
 
     session['username'] = username
 
