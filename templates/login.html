@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block main %}
+    <h1 class="login-title">Welcome to The Boardgame Companion</h1>
+    <hr>
+    <form action="/login" method="post">
+        <div class="form-container">
+            <input class="form-text" type="text" name="username" placeholder="Username" autocomplete="off" required>
+            <input class="form-text" type="password" name="password" placeholder="Password" autocomplete="off" required>
+            <button class="form-button" type="submit">Login</button>
+            <a class="form-button register" href="/register">Register Account</a>
+        </div>
+    </form>
+{% endblock %}
