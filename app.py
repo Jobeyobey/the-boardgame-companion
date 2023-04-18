@@ -125,7 +125,11 @@ def register():
 def index():
   # GET
   if request.method == "GET":
-    return render_template("index.html")
+
+    # Get username from session
+    username = session['username']
+    print(username)
+    return render_template("index.html", username=username)
 
   # POST
   if request.method == "POST":
@@ -172,13 +176,75 @@ def search():
   
 
   
-@app.route("/gamepage")
+@app.route("/gamepage", methods=["GET", "POST"])
 @login_required
 def gamepage():
-  # Get requested game id from URL query
-  id = request.args['id']
 
-  return render_template("gamepage.html", id=id)
+  if request.method == "POST":
+    # Get game id from url
+    gameId = int(request.args['id'])
+
+    user = session['username']
+
+    # OPEN CONNECTION TO GET USER ID
+    connection, db = open_db()
+
+    username = session['username']
+    userId_statement = (
+      "SELECT id FROM users WHERE username = (?)"
+    )
+    userId_row = db.execute(userId_statement, (username,)).fetchall()
+
+    for row in userId_row:
+      userId = row['id']
+
+    # CLOSE CONNECTION FOR USER ID
+    close_db(connection, db)
+
+    # Assign userId and gameId for later statements
+    data = (userId, gameId)
+
+    # OPEN CONNECTION TO SEARCH COLLECTIONS
+    connection, db = open_db()
+
+    # Check if gameid is in collection
+    userCollection_statement = (
+      "SELECT gameid FROM collections WHERE userid = (?) AND gameid = (?)"
+    )
+    userCollection = db.execute(userCollection_statement, data).fetchall()
+
+    # CLOSE CONNECTION FOR SEARCHING COLLECTIONS
+    close_db(connection, db)
+
+    # OPEN CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
+    connection, db = open_db()
+
+    # If game is not in collection, add it. Else, delete it.
+    if userCollection == []:
+      add_statement = (
+        "INSERT INTO collections (userid, gameid) VALUES (?, ?)"
+      )
+      db.execute(add_statement, data)
+      connection.commit()
+      print("ADDED")
+    else:
+      delete_statement = (
+        "DELETE FROM collections WHERE userid = (?) AND gameid = (?)"
+      )
+      db.execute(delete_statement, data)
+      connection.commit()
+      print("DELETED")
+
+    # CLOSE CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
+    close_db(connection, db)
+
+    return render_template("gamepage.html", gameId=gameId)
+
+  if request.method == "GET":
+    # Get requested game id from URL query
+    gameId = request.args['id']
+
+    return render_template("gamepage.html", gameId=gameId)
 
 
 

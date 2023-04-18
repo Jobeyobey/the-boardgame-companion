@@ -7,7 +7,7 @@
     <script>
         var req = new XMLHttpRequest();
         // Input query from user into API search string
-        req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{id}}&stats=1", false);
+        req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{gameId}}&stats=1", false);
         req.send(null);
         // Function to convert HTML unicode characters
         function HTMLconvert(str)
@@ -16,6 +16,18 @@
             str = str.replace(/&amp;quot;/g, '"');
             return str;
             }
+
+        // Add Game onclick
+        function addGame(event) {
+            var req = new XMLHttpRequest();
+            req.open("POST", "/gamepage", true)
+            // req.setRequestHeader("Content-Type", "application/json")
+            // let data = {
+            //     "id": "test"
+            // };
+            // data = JSON.stringify(data);
+            req.send(data)
+        }
     </script>
 {% endblock %}
 
@@ -30,7 +42,9 @@
                     <p id="players" class="header-stats">Players:</p>
                     <p id="playtime" class="header-stats">Playtime:</p>
                 </div>
-                <button id="add-game" class="button btn-add btn-strong">Add to collection</button>
+                <form action="/gamepage?id={{ gameId }}" method="post">
+                    <button id="add-game" name="add_game" value="{{ gameId }}" class="button btn-add btn-strong">Add to collection</button>
+                </form>
             </div>
         </div>
     </div>
@@ -51,7 +65,7 @@
         parser = new DOMParser();
 
         xmlDoc = parser.parseFromString(text, "text/xml");
-        boardGame = xmlDoc.getElementById({{id}});
+        boardGame = xmlDoc.getElementById({{gameId}});
         console.log(boardGame)
 
         // Game Image
