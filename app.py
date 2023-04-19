@@ -145,7 +145,41 @@ def index():
 @login_required
 def collection():
 
-  return render_template("collection.html")
+  # Get userId
+  connection, db = open_db()
+  username = session['username']
+  statement = "SELECT id FROM users WHERE username = (?)"
+  userId_rows = db.execute(statement, (username,)).fetchall()
+  close_db(connection, db)
+  for row in userId_rows:
+    userId = row['id']
+    
+  # Get user's collection
+  connection, db = open_db()
+  statement = "SELECT gameid FROM collections WHERE userid = (?)"
+  collection_rows = db.execute(statement, (userId,)).fetchall()
+  user_collection = []
+  for row in collection_rows:
+    user_collection.append(row['gameid'])
+  close_db(connection, db)
+
+  # Get gamenames and thumbs from gamecache
+  connection, db = open_db()
+  statement = "SELECT name, image FROM gamecache WHERE gameid = (?)"
+  length = len(user_collection)
+  if length > 1:
+    for i in range(1, length):
+      statement = statement + " OR gameid = (?)"
+  cache_rows = db.execute(statement, user_collection).fetchall()
+  close_db(connection, db)
+  games = []
+  for row in cache_rows:
+    games.append({'name': row['name'], 'thumb': row['image']})
+
+  print(games)
+
+
+  return render_template("collection.html", games=games)
 
 
 @app.route("/playlog")

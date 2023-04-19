@@ -9,37 +9,11 @@
     <h2 class="page-title">Collection</h2>
     <hr class="alt-hr">
     <div class="tiles">
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Spirit Island</h5>
-        </div>
+        {% for game in games %}
+            <div class="tile-container">
+                <img class="tile-image" src={{game['thumb']}}>
+                <h5 class="tile-title">{{game['name']}}</h5>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
