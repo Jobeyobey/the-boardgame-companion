@@ -4,6 +4,8 @@ from helpers import login_required, open_db, close_db, validate_username, valida
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
+import requests
+import xmltodict
 
 app = Flask(__name__)
 
@@ -179,72 +181,86 @@ def search():
 @app.route("/gamepage", methods=["GET", "POST"])
 @login_required
 def gamepage():
+  # Get game id from url
+  gameId = int(request.args['id'])
+
+  user = session['username']
+
+  # Get user ID from database
+  connection, db = open_db()
+  username = session['username']
+  userId_statement = (
+    "SELECT id FROM users WHERE username = (?)"
+  )
+  userId_row = db.execute(userId_statement, (username,)).fetchall()
+  for row in userId_row:
+    userId = row['id']
+  close_db(connection, db)
+
+  data = (userId, gameId)
+
+  # Search user collection for game
+  connection, db = open_db()
+  # Check if gameid is in collection
+  userCollection_statement = (
+    "SELECT gameid FROM collections WHERE userid = (?) AND gameid = (?)"
+  )
+  userCollection = db.execute(userCollection_statement, data).fetchall()
+  close_db(connection, db)
+
+  if userCollection == []:
+    inCollection = False
+  else:
+    inCollection = True
 
   if request.method == "POST":
-    # Get game id from url
-    gameId = int(request.args['id'])
-
-    user = session['username']
-
-    # OPEN CONNECTION TO GET USER ID
-    connection, db = open_db()
-
-    username = session['username']
-    userId_statement = (
-      "SELECT id FROM users WHERE username = (?)"
-    )
-    userId_row = db.execute(userId_statement, (username,)).fetchall()
-
-    for row in userId_row:
-      userId = row['id']
-
-    # CLOSE CONNECTION FOR USER ID
-    close_db(connection, db)
-
-    # Assign userId and gameId for later statements
-    data = (userId, gameId)
-
-    # OPEN CONNECTION TO SEARCH COLLECTIONS
-    connection, db = open_db()
-
-    # Check if gameid is in collection
-    userCollection_statement = (
-      "SELECT gameid FROM collections WHERE userid = (?) AND gameid = (?)"
-    )
-    userCollection = db.execute(userCollection_statement, data).fetchall()
-
-    # CLOSE CONNECTION FOR SEARCHING COLLECTIONS
-    close_db(connection, db)
-
     # OPEN CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
-    connection, db = open_db()
+    user_connection, user_db = open_db()
 
     # If game is not in collection, add it. Else, delete it.
-    if userCollection == []:
-      add_statement = (
-        "INSERT INTO collections (userid, gameid) VALUES (?, ?)"
-      )
-      db.execute(add_statement, data)
-      connection.commit()
-      print("ADDED")
-    else:
+    if userCollection:
       delete_statement = (
         "DELETE FROM collections WHERE userid = (?) AND gameid = (?)"
       )
-      db.execute(delete_statement, data)
-      connection.commit()
-      print("DELETED")
+      user_db.execute(delete_statement, data)
+      user_connection.commit()
+      close_db(user_connection, user_db)
+    else:
+      add_statement = (
+        "INSERT INTO collections (userid, gameid) VALUES (?, ?)"
+      )
+      user_db.execute(add_statement, data)
+      user_connection.commit()
+      close_db(user_connection, user_db)
 
-    # CLOSE CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
-    close_db(connection, db)
+      # Check if game already exists in gamecache
+      cache_connection, cache_db = open_db()
+      statement = "SELECT gameid FROM gamecache WHERE gameid = (?)"
+      response = cache_db.execute(statement, (gameId,)).fetchall()
+      # If game doesn't exist in gamecache, update gamecache with new game
+      if response == []:
+        #  Get thumbnail and gamename from BGG API
+        url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
+        response = requests.get(url)
+        parsed = xmltodict.parse(response.content)
+        image = parsed['items']['item']['thumbnail']
+        name = parsed['items']['item']['name'][0]['@value']
 
-    return render_template("gamepage.html", gameId=gameId)
+        #  Insert gameid, gamename and image into database to reduce API calls for collection page
+        insert_statement = "INSERT INTO gamecache (gameid, name, image) VALUES (?, ?, ?)"
+        data = (gameId, name, image)
+        cache_db.execute(insert_statement, data)
+        cache_connection.commit()
+        close_db(cache_connection, cache_db)
+
+    # Create url for redirecting back to page for refresh
+    tempUrl = "/gamepage?id=" + str(gameId)
+
+    return redirect(tempUrl)
 
   if request.method == "GET":
-    # Get requested game id from URL query
-    gameId = request.args['id']
 
-    return render_template("gamepage.html", gameId=gameId)
+    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
 
 
 

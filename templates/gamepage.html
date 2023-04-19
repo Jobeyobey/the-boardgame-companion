@@ -18,7 +18,7 @@
             }
 
         // Add Game onclick
-        function addGame(event) {
+        function updateGame(event) {
             var req = new XMLHttpRequest();
             req.open("POST", "/gamepage", true)
             // req.setRequestHeader("Content-Type", "application/json")
@@ -43,7 +43,12 @@
                     <p id="playtime" class="header-stats">Playtime:</p>
                 </div>
                 <form action="/gamepage?id={{ gameId }}" method="post">
-                    <button id="add-game" name="add_game" value="{{ gameId }}" class="button btn-add btn-strong">Add to collection</button>
+                    <!-- Render button depending on if it's in collection -->
+                    {% if inCollection %}
+                        <button id="add-game" name="update_game" value="{{ gameId }}" class="button btn-remove btn-strong">Remove from Collection</button>
+                    {% else %}
+                        <button id="add-game" name="update_game" value="{{ gameId }}" class="button btn-add btn-strong">Add to collection</button>
+                    {% endif %}
                 </form>
             </div>
         </div>

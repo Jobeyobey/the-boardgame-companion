@@ -456,6 +456,10 @@ hr {
   font-size: 1rem;
 }
 
+.btn-remove {
+  background-color: red;
+}
+
 #add-game {
   margin: auto auto auto 0;
 }
