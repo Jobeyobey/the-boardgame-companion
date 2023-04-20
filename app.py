@@ -4,6 +4,8 @@ from helpers import login_required, open_db, close_db, validate_username, valida
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
+import requests
+import xmltodict
 
 app = Flask(__name__)
 
@@ -125,7 +127,11 @@ def register():
 def index():
   # GET
   if request.method == "GET":
-    return render_template("index.html")
+
+    # Get username from session
+    username = session['username']
+    print(username)
+    return render_template("index.html", username=username)
 
   # POST
   if request.method == "POST":
@@ -139,7 +145,45 @@ def index():
 @login_required
 def collection():
 
-  return render_template("collection.html")
+  # Get userId
+  connection, db = open_db()
+  username = session['username']
+  statement = "SELECT id FROM users WHERE username = (?)"
+  userId_rows = db.execute(statement, (username,)).fetchall()
+  close_db(connection, db)
+  for row in userId_rows:
+    userId = row['id']
+    
+  # Get user's collection
+  connection, db = open_db()
+  statement = "SELECT gameid FROM collections WHERE userid = (?)"
+  collection_rows = db.execute(statement, (userId,)).fetchall()
+  user_collection = []
+  for row in collection_rows:
+    user_collection.append(row['gameid'])
+  close_db(connection, db)
+
+  # Get gamenames and thumbs from gamecache
+  connection, db = open_db()
+  statement = "SELECT name, image, gameid FROM gamecache WHERE gameid = (?)"
+  length = len(user_collection)
+  if length > 1:
+    for i in range(1, length):
+      statement = statement + " OR gameid = (?)"
+  cache_rows = db.execute(statement, user_collection).fetchall()
+  close_db(connection, db)
+  games = []
+  for row in cache_rows:
+    games.append({
+                  'name': row['name'],
+                  'thumb': row['image'],
+                  'gameid': "/gamepage?id=" + str(row['gameid'])
+                })
+
+  print(games)
+
+
+  return render_template("collection.html", games=games)
 
 
 @app.route("/playlog")
@@ -172,13 +216,89 @@ def search():
   
 
   
-@app.route("/gamepage")
+@app.route("/gamepage", methods=["GET", "POST"])
 @login_required
 def gamepage():
-  # Get requested game id from URL query
-  id = request.args['id']
+  # Get game id from url
+  gameId = int(request.args['id'])
 
-  return render_template("gamepage.html", id=id)
+  user = session['username']
+
+  # Get user ID from database
+  connection, db = open_db()
+  username = session['username']
+  userId_statement = (
+    "SELECT id FROM users WHERE username = (?)"
+  )
+  userId_row = db.execute(userId_statement, (username,)).fetchall()
+  for row in userId_row:
+    userId = row['id']
+  close_db(connection, db)
+
+  data = (userId, gameId)
+
+  # Search user collection for game
+  connection, db = open_db()
+  # Check if gameid is in collection
+  userCollection_statement = (
+    "SELECT gameid FROM collections WHERE userid = (?) AND gameid = (?)"
+  )
+  userCollection = db.execute(userCollection_statement, data).fetchall()
+  close_db(connection, db)
+
+  if userCollection == []:
+    inCollection = False
+  else:
+    inCollection = True
+
+  if request.method == "POST":
+    # OPEN CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
+    user_connection, user_db = open_db()
+
+    # If game is not in collection, add it. Else, delete it.
+    if userCollection:
+      delete_statement = (
+        "DELETE FROM collections WHERE userid = (?) AND gameid = (?)"
+      )
+      user_db.execute(delete_statement, data)
+      user_connection.commit()
+      close_db(user_connection, user_db)
+    else:
+      add_statement = (
+        "INSERT INTO collections (userid, gameid) VALUES (?, ?)"
+      )
+      user_db.execute(add_statement, data)
+      user_connection.commit()
+      close_db(user_connection, user_db)
+
+      # Check if game already exists in gamecache
+      cache_connection, cache_db = open_db()
+      statement = "SELECT gameid FROM gamecache WHERE gameid = (?)"
+      response = cache_db.execute(statement, (gameId,)).fetchall()
+      # If game doesn't exist in gamecache, update gamecache with new game
+      if response == []:
+        #  Get thumbnail and gamename from BGG API
+        url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
+        response = requests.get(url)
+        parsed = xmltodict.parse(response.content)
+        image = parsed['items']['item']['thumbnail']
+        name = parsed['items']['item']['name'][0]['@value']
+
+        #  Insert gameid, gamename and image into database to reduce API calls for collection page
+        insert_statement = "INSERT INTO gamecache (gameid, name, image) VALUES (?, ?, ?)"
+        data = (gameId, name, image)
+        cache_db.execute(insert_statement, data)
+        cache_connection.commit()
+        close_db(cache_connection, cache_db)
+
+    # Create url for redirecting back to page for refresh
+    tempUrl = "/gamepage?id=" + str(gameId)
+
+    return redirect(tempUrl)
+
+  if request.method == "GET":
+
+    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
 
 
 

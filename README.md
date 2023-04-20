@@ -75,3 +75,6 @@ https://www.youtube.com/watch?v=lvKjQhQ8Fwk&ab_channel=PrettyPrinted
 
 ### Checking if a string has any of a set of characters
 https://www.oreilly.com/library/view/python-cookbook/0596001673/ch03s07.html
+
+### Xml to dictionary for Python
+https://github.com/martinblech/xmltodict
