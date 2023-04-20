@@ -165,7 +165,7 @@ def collection():
 
   # Get gamenames and thumbs from gamecache
   connection, db = open_db()
-  statement = "SELECT name, image FROM gamecache WHERE gameid = (?)"
+  statement = "SELECT name, image, gameid FROM gamecache WHERE gameid = (?)"
   length = len(user_collection)
   if length > 1:
     for i in range(1, length):
@@ -174,7 +174,11 @@ def collection():
   close_db(connection, db)
   games = []
   for row in cache_rows:
-    games.append({'name': row['name'], 'thumb': row['image']})
+    games.append({
+                  'name': row['name'],
+                  'thumb': row['image'],
+                  'gameid': "/gamepage?id=" + str(row['gameid'])
+                })
 
   print(games)
 

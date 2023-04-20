@@ -10,12 +10,12 @@
     <hr class="alt-hr">
     <div class="tiles">
         {% for game in games %}
-            <div class="tile-container">
+            <a href={{game['gameid']}} class="tile-container">
                 <div class="tile-image-container">
                     <img class="tile-image" src={{game['thumb']}}>
                     <h5 class="tile-title">{{game['name']}}</h5>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 {% endblock %}

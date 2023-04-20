@@ -12,6 +12,7 @@ body {
 
 a {
   text-decoration: none;
+  color: black;
 }
 
 /* Nav Bar */
@@ -483,14 +484,14 @@ hr {
 /* Collection Page and Friends Page */
 
 .tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
   gap: 1rem;
 }
 
 .tile-container {
-  padding: 0.2rem;
-  max-width: 225px;
+  padding: 0.25rem 0.25rem 0 0.25rem;
   background-color: #e1e1e1;
   border-radius: 5px;
   transition-duration: 0.3s;
@@ -512,33 +513,12 @@ hr {
   margin: auto;
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
   border-radius: 5px 5px 0 0;
 }
 
 .tile-title {
   text-align: center;
   align-self: flex-end;
-}
-
-@media (max-width: 540px) {
-  .collection-tiles {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 0.5rem;
-  }
-  .tile-image {
-    min-width: 150px;
-  }
-}
-
-@media (max-width: 450px) {
-  .tiles {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-  .tile-image {
-    min-width: 120px;
-  }
 }
 
 /* Friend Accept/Decline Buttons */
