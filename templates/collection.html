@@ -11,8 +11,10 @@
     <div class="tiles">
         {% for game in games %}
             <div class="tile-container">
-                <img class="tile-image" src={{game['thumb']}}>
-                <h5 class="tile-title">{{game['name']}}</h5>
+                <div class="tile-image-container">
+                    <img class="tile-image" src={{game['thumb']}}>
+                    <h5 class="tile-title">{{game['name']}}</h5>
+                </div>
             </div>
         {% endfor %}
     </div>
