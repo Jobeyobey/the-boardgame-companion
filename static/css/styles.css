@@ -486,8 +486,13 @@ hr {
 .tiles {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
   gap: 1rem;
+}
+
+.tiles::after {
+  content: "";
+  min-width: 14.5rem;
 }
 
 .tile-container {
