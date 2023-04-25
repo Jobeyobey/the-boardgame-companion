@@ -60,3 +60,13 @@ def validate_password(password, confirm):
       return redirect(url_for("register"))
     
     return False
+
+def get_user_id(username):
+  connection, db = open_db()
+  username = session['username']
+  statement = "SELECT id FROM users WHERE username = (?)"
+  userId_rows = db.execute(statement, (username,)).fetchall()
+  close_db(connection, db)
+  for row in userId_rows:
+    userId = row['id']
+  return userId

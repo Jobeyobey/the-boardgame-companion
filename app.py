@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -147,13 +147,7 @@ def index():
 def collection():
 
   # Get userId
-  connection, db = open_db()
-  username = session['username']
-  statement = "SELECT id FROM users WHERE username = (?)"
-  userId_rows = db.execute(statement, (username,)).fetchall()
-  close_db(connection, db)
-  for row in userId_rows:
-    userId = row['id']
+  userId = get_user_id(session['username'])
     
   # Get user's collection
   connection, db = open_db()
@@ -197,6 +191,8 @@ def playlog():
     gameId = request.form.get("id")
     result = request.form.get("result")
     notes = request.form.get("notes")
+    if notes == "":
+      notes = "N/A"
     d = datetime.datetime.now()
     date = f"{d.strftime('%Y')} {d.strftime('%m')} {d.strftime('%d')}"
 
@@ -214,7 +210,23 @@ def playlog():
     if gameName != responseName or gameId != responseId:
       flash("Error updating playlog (gameid and name do not match)")
       return redirect(url_for("index"))
+    # Check no other HTML was messed with
+      # 
+      # 
+      # 
     
+    userId = get_user_id(session['username'])
+
+    # Create data object to insert into database
+    data = (userId, gameId, result, date, notes)
+
+    # Open database to enter data
+    connection, db = open_db()
+    statement = "INSERT INTO playlog (userid, gameid, result, time, note) VALUES (?, ?, ?, ?, ?)"
+    db.execute(statement, data)
+    connection.commit()
+    close_db(connection, db)
+
     print(gameName)
     print(gameId)
     print(result)
@@ -256,19 +268,7 @@ def gamepage():
   # Get game id from url
   gameId = int(request.args['id'])
 
-  user = session['username']
-
-  # Get user ID from database
-  connection, db = open_db()
-  username = session['username']
-  userId_statement = (
-    "SELECT id FROM users WHERE username = (?)"
-  )
-  userId_row = db.execute(userId_statement, (username,)).fetchall()
-  for row in userId_row:
-    userId = row['id']
-  close_db(connection, db)
-
+  userId = session['username']
   data = (userId, gameId)
 
   # Search user collection for game
