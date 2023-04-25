@@ -6,6 +6,7 @@ import os
 import sqlite3
 import requests
 import xmltodict
+import datetime
 
 app = Flask(__name__)
 
@@ -186,11 +187,44 @@ def collection():
   return render_template("collection.html", games=games)
 
 
-@app.route("/playlog")
+@app.route("/playlog", methods=["GET", "POST"])
 @login_required
 def playlog():
 
-  return render_template("playlog.html")
+  if request.method == "POST":
+    # Get info from form
+    gameName = request.form.get("name")
+    gameId = request.form.get("id")
+    result = request.form.get("result")
+    notes = request.form.get("notes")
+    d = datetime.datetime.now()
+    date = f"{d.strftime('%Y')} {d.strftime('%m')} {d.strftime('%d')}"
+
+    # Check name and id match on BGG
+    url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
+    response = requests.get(url)
+    parsed = xmltodict.parse(response.content)
+    try:
+      responseName = parsed['items']['item']['name'][0]['@value']
+    except KeyError:
+      responseName = parsed['items']['item']['name']['@value']
+      pass
+    responseId = parsed['items']['item']['@id']
+    # If they don't match, return them to home page
+    if gameName != responseName or gameId != responseId:
+      flash("Error updating playlog (gameid and name do not match)")
+      return redirect(url_for("index"))
+    
+    print(gameName)
+    print(gameId)
+    print(result)
+    print(notes)
+    print(date)
+    
+    return redirect("/playlog")
+
+  if request.method == "GET":
+    return render_template("playlog.html")
 
 
 @app.route("/friends")

@@ -340,10 +340,63 @@ nav {
 
 .header-right {
   min-width: 9.45rem;
-  padding: 1rem 0;
   margin: 0 auto;
   align-self: flex-end;
 }
+
+.input-title {
+  margin: 0 0 1rem 0;
+}
+
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+}
+
+.overlay-container {
+  padding: 2rem;
+  background: white;
+  width: 320px;
+  border-radius: 2px;
+}
+
+.select-block {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  border-radius: 5px;
+  background-color: #F1F1F1;
+}
+
+.textarea {
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 5rem;
+  resize: none;
+  font-family: 'inter', sans-serif;
+}
+
+.record {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.add {
+  background-color: #41a6a1;
+}
+
+.remove {
+  background-color: red;
 }
 
 hr {
@@ -378,7 +431,6 @@ hr {
     text-align: center;
   }
   .header-right {
-    margin: 0rem 0;
     align-self: center;
   }
   hr {
@@ -461,7 +513,7 @@ hr {
 }
 
 .button {
-  background-color: #41a6a1;
+  /* background-color: #41a6a1; */
   border: none;
   border-radius: 5px;
   color: white;
