@@ -9,29 +9,8 @@
         // Input query from user into API search string
         req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{gameId}}&stats=1", false);
         req.send(null);
-        // Function to convert HTML unicode characters
-        function HTMLconvert(str)
-            {
-            str = str.replace(/&amp;#10;/g, "<br>");
-            str = str.replace(/&amp;quot;/g, '"');
-            return str;
-            }
-
-        // Add Game onclick
-        function updateGame(event) {
-            var req = new XMLHttpRequest();
-            req.open("POST", "/gamepage", true)
-            req.send(data)
-        }
-
-        // Enable/Disable Record Session input overlay
-        function overlayOn() {
-            document.getElementById("overlay").style.display = "flex";
-        }
-        function overlayOff() {
-            document.getElementById("overlay").style.display = "none";
-        }
     </script>
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
