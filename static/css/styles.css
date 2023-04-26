@@ -301,7 +301,7 @@ nav {
 .main-img {
   max-width: 15rem;
   height: 100%;
-  margin-right: 4rem;
+  margin-right: 2rem;
   border-radius: 5px;
 }
 
@@ -309,21 +309,22 @@ nav {
   display: flex;
 }
 
-.head-info {
-  display: flex;
-  flex-direction: column;
+.header-info {
+  width: 100%;
 }
 
-.info-container {
+.gamepage-info {
   display: flex;
-  flex-direction: row;
-  gap: 4rem;
+  justify-content: space-between;
+}
+
+.gamepage-info::after {
+  content: "";
 }
 
 .game-info-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .head-name {
@@ -334,13 +335,69 @@ nav {
   margin: 0 0 1rem 0;
 }
 
+.overlay-title {
+  margin: 0 0 1rem 0;
+}
+
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2;
+}
+
+.overlay-container {
+  padding: 2rem;
+  background: white;
+  width: 320px;
+  border-radius: 2px;
+}
+
+.select-block {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  border-radius: 5px;
+  background-color: #F1F1F1;
+}
+
+.textarea {
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 5rem;
+  resize: none;
+  font-family: 'inter', sans-serif;
+}
+
+.record {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.add {
+  background-color: #41a6a1;
+}
+
+.remove {
+  background-color: red;
+}
+
 hr {
   margin: 2rem 0;
   border: 2px solid #e1e1e1;
   border-radius: 2px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .header {
     flex-direction: column;
     align-items: center;
@@ -359,13 +416,30 @@ hr {
   .info-container {
     gap: 2rem;
   }
-  .info-1 {
-    text-align: center;
+  .gamepage-info {
+    justify-content: space-around;
+  }
+  .gamepage-info::before {
+    content: "";
   }
   hr {
     margin: 1rem 0rem 1rem -2rem;
     width: 100vw;
     overflow: hidden;
+  }
+}
+
+@media (max-width: 560px) {
+  .gamepage-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .gamepage-info::before {
+    content: none;
+  }
+  .gamepage-info::after {
+    content: none;
   }
 }
 
@@ -442,7 +516,6 @@ hr {
 }
 
 .button {
-  background-color: #41a6a1;
   border: none;
   border-radius: 5px;
   color: white;
@@ -462,7 +535,7 @@ hr {
 }
 
 #add-game {
-  margin: auto auto auto 0;
+  margin: auto auto 0 0;
 }
 
 @media (max-width: 768px) {
@@ -486,8 +559,13 @@ hr {
 .tiles {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
   gap: 1rem;
+}
+
+.tiles::after {
+  content: "";
+  min-width: 14.5rem;
 }
 
 .tile-container {

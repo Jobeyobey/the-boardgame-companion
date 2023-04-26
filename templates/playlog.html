@@ -3,62 +3,42 @@
 
 
 {% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
+    <div id="overlay">
+        <div id="overlay-container" class="overlay-container">
+            <form action="/playlog" id="record" method="post">
+                <h2 id="overlay-title" class="overlay-title">Playlog</h2>
+                <h3>Date</h3>
+                <p id="overlay-date">dd/mm/yyyy</p>
+                <h3>Result</h3>
+                <p id="overlay-result">Win</p>
+                <h3>Game Notes</h3>
+                <p id="overlay-note">None</p>
+                <button type="button" onclick="overlayOff()" class="button record add btn-strong" type="submit">Done</button>
+            </form>
+        </div>
+    </div>
     <div class="alt-head">
         <h2 class="page-title">Play Log</h2>
-        <a class="button btn-add">Record Session</a>
     </div>
     <hr class="alt-hr">
     <div class="page-content-container">
-        <div class="hr-tile-container">
-            <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h4 class="title ta">Spirit Island asd asd</h4>
-            <p class="info ia">1 day ago</p>
-            <h4 class="title tb">Result</h4>
-            <p class="info ib">Win</p>
-            <h4 class="title tc">Playtime</h4>
-            <p class="info ic">02:38</p>
-            <h4 class="title td">Game No.</h4>
-            <p class="info id">9</p>
-            <span class="caret right"></span>
-        </div>
-        <div class="hr-tile-container">
-            <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h4 class="title ta">Spirit Island asd asd</h4>
-            <p class="info ia">1 day ago</p>
-            <h4 class="title tb">Result</h4>
-            <p class="info ib">Win</p>
-            <h4 class="title tc">Playtime</h4>
-            <p class="info ic">02:38</p>
-            <h4 class="title td">Game No.</h4>
-            <p class="info id">9</p>
-            <span class="caret right"></span>
-        </div>
-        <div class="hr-tile-container">
-            <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h4 class="title ta">Spirit Island asd asd</h4>
-            <p class="info ia">1 day ago</p>
-            <h4 class="title tb">Result</h4>
-            <p class="info ib">Win</p>
-            <h4 class="title tc">Playtime</h4>
-            <p class="info ic">02:38</p>
-            <h4 class="title td">Game No.</h4>
-            <p class="info id">9</p>
-            <span class="caret right"></span>
-        </div>
-        <div class="hr-tile-container">
-            <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h4 class="title ta">Spirit Island asd asd</h4>
-            <p class="info ia">1 day ago</p>
-            <h4 class="title tb">Result</h4>
-            <p class="info ib">Win</p>
-            <h4 class="title tc">Playtime</h4>
-            <p class="info ic">02:38</p>
-            <h4 class="title td">Game No.</h4>
-            <p class="info id">9</p>
-            <span class="caret right"></span>
-        </div>
+        {% if user_log == 0 %}
+            <p>No games logged. Search a game and record a session to fill your playlog!</p>
+        {% else %}
+            {% for entry in user_log %}
+            <div onclick="tileOverlayOn({{entry}})" id="{{ entry['id'] }}" class="hr-tile-container">
+                <img src="{{ entry['thumb'] }}">
+                <h4 class="title ta">{{ entry['name'] }}</h4>
+                <p class="info ia">{{ entry['time'] }}</p>
+                <h4 class="title tb">Result</h4>
+                <p class="info ib">{{ entry['result'] }}</p>
+                <span class="caret right"></span>
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

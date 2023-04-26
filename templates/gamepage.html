@@ -9,47 +9,51 @@
         // Input query from user into API search string
         req.open("GET", "https://boardgamegeek.com/xmlapi2/thing?id={{gameId}}&stats=1", false);
         req.send(null);
-        // Function to convert HTML unicode characters
-        function HTMLconvert(str)
-            {
-            str = str.replace(/&amp;#10;/g, "<br>");
-            str = str.replace(/&amp;quot;/g, '"');
-            return str;
-            }
-
-        // Add Game onclick
-        function updateGame(event) {
-            var req = new XMLHttpRequest();
-            req.open("POST", "/gamepage", true)
-            // req.setRequestHeader("Content-Type", "application/json")
-            // let data = {
-            //     "id": "test"
-            // };
-            // data = JSON.stringify(data);
-            req.send(data)
-        }
     </script>
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
+    <div id="overlay">
+        <div id="overlay-container" class="overlay-container">
+            <form action="/playlog" id="record" method="post">
+                <h2 id="input-title" class="input-title">Record a session</h2>
+                <select name="result" id="result" form="record" class="select-block">
+                    <option value="Win">Win</option>
+                    <option value="Loss">Loss</option>
+                </select>
+                <textarea form="record" name="notes" id="notes" class="textarea" maxlength="280" placeholder="Up to 280 characters"></textarea>
+                <input type="hidden" id="record-id" name="id" value="{{ gameId }}">
+                <input type="hidden" id="record-name" name="name" value="">
+                <button type="submit" class="button record add btn-strong" type="submit">Submit</button>
+                <button type="button" class="form-button record remove" onclick="overlayOff()">Close</button>
+            </form>
+        </div>
+    </div>
     <div class="header">
         <img id="game-img" class="main-img">
         <div class="header-info">
             <h1 id="gameName" class="head-name">Game Name</h1>
-            <div class="game-info-container">
-                <div class="info-1">
+            <div class="gamepage-info">
+                <div class="info-left">
                     <p id="rating" class="header-stats">Rating:</p>
                     <p id="players" class="header-stats">Players:</p>
                     <p id="playtime" class="header-stats">Playtime:</p>
+                    <form action="/gamepage?id={{ gameId }}" method="post">
+                        <!-- Render button depending on if it's in collection -->
+                        {% if inCollection %}
+                            <button id="add-game" name="update_game" value="{{ gameId }}" class="button btn-remove btn-strong">Remove from Collection</button>
+                        {% else %}
+                            <button id="add-game" name="update_game" value="{{ gameId }}" class="button add btn-strong">Add to collection</button>
+                        {% endif %}
+                    </form>
                 </div>
-                <form action="/gamepage?id={{ gameId }}" method="post">
-                    <!-- Render button depending on if it's in collection -->
-                    {% if inCollection %}
-                        <button id="add-game" name="update_game" value="{{ gameId }}" class="button btn-remove btn-strong">Remove from Collection</button>
-                    {% else %}
-                        <button id="add-game" name="update_game" value="{{ gameId }}" class="button btn-add btn-strong">Add to collection</button>
-                    {% endif %}
-                </form>
+                <div class="info-right">
+                    <p id="rating" class="header-stats">Total Plays:</p>
+                    <p id="players" class="header-stats">Win Ratio:</p>
+                    <p id="playtime" class="header-stats">Last Played:</p>
+                    <button onclick="overlayOn()" class="button add btn-strong">Record Session</button>
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +75,6 @@
 
         xmlDoc = parser.parseFromString(text, "text/xml");
         boardGame = xmlDoc.getElementById({{gameId}});
-        console.log(boardGame)
 
         // Game Image
         var image = boardGame.getElementsByTagName("image")[0].innerHTML;
@@ -83,6 +86,10 @@
             .getAttribute("value");
         var nameElement = document.getElementById("gameName");
         gameName.innerHTML = name;
+        var inputFormTitle = document.getElementById("input-title");
+        inputFormTitle.innerHTML = `Record a session for ${name}`;
+        var inputFormName = document.getElementById("record-name");
+        inputFormName.value = name;
 
         // Rating
         var rating = boardGame.getElementsByTagName("statistics")[0]

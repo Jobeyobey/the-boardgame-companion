@@ -78,3 +78,6 @@ https://www.oreilly.com/library/view/python-cookbook/0596001673/ch03s07.html
 
 ### Xml to dictionary for Python
 https://github.com/martinblech/xmltodict
+
+### Clicking outside overlay to disable it
+https://www.w3docs.com/snippets/javascript/how-to-detect-a-click-outside-an-element.html
