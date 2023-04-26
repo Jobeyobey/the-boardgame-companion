@@ -1,6 +1,8 @@
 from flask import session, redirect, url_for, flash
 from functools import wraps
 import sqlite3
+import requests
+import xmltodict
    
 def login_required(f):
     @wraps(f)
@@ -70,3 +72,27 @@ def get_user_id(username):
   for row in userId_rows:
     userId = row['id']
   return userId
+
+def add_gamecache(gameId):
+   # Check if game already exists in gamecache
+    cache_connection, cache_db = open_db()
+    statement = "SELECT gameid FROM gamecache WHERE gameid = (?)"
+    response = cache_db.execute(statement, (gameId,)).fetchall()
+    # If game doesn't exist in gamecache, update gamecache with new game
+    if response == []:
+      #  Get thumbnail and gamename from BGG API
+      url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
+      response = requests.get(url)
+      parsed = xmltodict.parse(response.content)
+      image = parsed['items']['item']['thumbnail']
+      try:
+        name = parsed['items']['item']['name'][0]['@value']
+      except KeyError:
+        name = parsed['items']['item']['name']['@value']
+
+      #  Insert gameid, gamename and image into database to reduce API calls for collection page
+      insert_statement = "INSERT INTO gamecache (gameid, name, image) VALUES (?, ?, ?)"
+      data = (gameId, name, image)
+      cache_db.execute(insert_statement, data)
+      cache_connection.commit()
+      close_db(cache_connection, cache_db)

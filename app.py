@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -24,7 +24,7 @@ def signout():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-  # POST
+  # POST here is used for logging in
   if request.method == "POST":
 
     # Connect to sqlite database
@@ -71,7 +71,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
-  # POST
+  # POST here is used for registering a new user
   if request.method == "POST":
 
     # Connect to sqlite database
@@ -131,15 +131,16 @@ def index():
 
     # Get username from session
     username = session['username']
-    print(username)
+
     return render_template("index.html", username=username)
 
-  # POST
-  if request.method == "POST":
-    # Get user query
-    query = request.form.get("query")
+  # # POST
+  # if request.method == "POST":
+  #   # Get user query
+  #   query = request.form.get("query")
+  #   print(query)
 
-    return render_template("index.html")
+  #   return render_template("index.html")
 
 
 @app.route("/collection")
@@ -175,9 +176,6 @@ def collection():
                   'gameid': "/gamepage?id=" + str(row['gameid'])
                 })
 
-  print(games)
-
-
   return render_template("collection.html", games=games)
 
 
@@ -185,6 +183,7 @@ def collection():
 @login_required
 def playlog():
 
+  # /playlog post is used when adding a new entry via /gamepage
   if request.method == "POST":
     # Get info from form
     gameName = request.form.get("name")
@@ -194,7 +193,7 @@ def playlog():
     if notes == "":
       notes = "N/A"
     d = datetime.datetime.now()
-    date = f"{d.strftime('%Y')} {d.strftime('%m')} {d.strftime('%d')}"
+    date = f"{d.strftime('%d')}/{d.strftime('%m')}/{d.strftime('%Y')}"
 
     # Check name and id match on BGG
     url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
@@ -210,33 +209,77 @@ def playlog():
     if gameName != responseName or gameId != responseId:
       flash("Error updating playlog (gameid and name do not match)")
       return redirect(url_for("index"))
-    # Check no other HTML was messed with
-      # 
-      # 
-      # 
+    # Check result is correct
+    if result != "Win" and result != "Loss":
+        flash(f"Error updating playlog (Problem recording match result \"{result}\")")
+        return redirect(url_for("index"))
+    # Check notes are under 280 characters
+    if len(notes) > 280:
+      flash("Error updating playlog (too many characters in notes)")
+      return redirect(url_for("index"))
     
     userId = get_user_id(session['username'])
 
     # Create data object to insert into database
     data = (userId, gameId, result, date, notes)
 
-    # Open database to enter data
+    # Commit data to database
     connection, db = open_db()
     statement = "INSERT INTO playlog (userid, gameid, result, time, note) VALUES (?, ?, ?, ?, ?)"
     db.execute(statement, data)
     connection.commit()
     close_db(connection, db)
-
-    print(gameName)
-    print(gameId)
-    print(result)
-    print(notes)
-    print(date)
     
     return redirect("/playlog")
 
+  # Displaying playlog page
   if request.method == "GET":
-    return render_template("playlog.html")
+    userId = get_user_id(session['username'])
+
+    # Search playlog db for this user's entries
+    connection, db = open_db()
+    statement = "SELECT gameid, result, time, note FROM playlog WHERE userid = (?)"
+    rows = db.execute(statement, (userId,)).fetchall()
+    close_db(connection, db)
+
+    if rows == []:
+      return render_template("playlog.html", user_log=0)
+
+    # Get names and thumbs of games using each unique gameid
+    gameIds = []
+    for row in rows:
+      if row[0] not in gameIds:
+        gameIds.append(row[0])
+
+    connection, db = open_db()
+
+    # Create and execute statement
+    statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
+    length = len(gameIds)
+    for i in range(1, length):
+      statement = statement + "OR gameid = (?)"
+    cache_rows = db.execute(statement, gameIds).fetchall()
+    close_db(connection, db)
+    
+    # Get names and thumbs from above result
+    game_details = {}
+    for row in cache_rows:
+      game_details[row[0]] = {
+          "name": row[1],
+          "thumb": row[2]
+        }
+
+    # Assign results of playlog to a list of dictionaries
+    user_log = [];
+    for row in rows:
+      user_log.append({
+        "name": game_details[row[0]]['name'],
+        "thumb": game_details[row[0]]['thumb'],
+        "result": row[1],
+        "time": row[2],
+        "note": row[3]
+      })
+    return render_template("playlog.html", user_log=user_log)
 
 
 @app.route("/friends")
@@ -253,14 +296,12 @@ def search():
   if request.method == "POST":
     # Get user query
     query = request.form.get("query")
-    print(query)
     
     return render_template("search.html", query=query)
   
   #GET
   redirect("/")
   
-
   
 @app.route("/gamepage", methods=["GET", "POST"])
 @login_required
@@ -268,7 +309,7 @@ def gamepage():
   # Get game id from url
   gameId = int(request.args['id'])
 
-  userId = session['username']
+  userId = get_user_id(session['username'])
   data = (userId, gameId)
 
   # Search user collection for game
@@ -305,25 +346,8 @@ def gamepage():
       user_connection.commit()
       close_db(user_connection, user_db)
 
-      # Check if game already exists in gamecache
-      cache_connection, cache_db = open_db()
-      statement = "SELECT gameid FROM gamecache WHERE gameid = (?)"
-      response = cache_db.execute(statement, (gameId,)).fetchall()
-      # If game doesn't exist in gamecache, update gamecache with new game
-      if response == []:
-        #  Get thumbnail and gamename from BGG API
-        url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
-        response = requests.get(url)
-        parsed = xmltodict.parse(response.content)
-        image = parsed['items']['item']['thumbnail']
-        name = parsed['items']['item']['name'][0]['@value']
-
-        #  Insert gameid, gamename and image into database to reduce API calls for collection page
-        insert_statement = "INSERT INTO gamecache (gameid, name, image) VALUES (?, ?, ?)"
-        data = (gameId, name, image)
-        cache_db.execute(insert_statement, data)
-        cache_connection.commit()
-        close_db(cache_connection, cache_db)
+      # Add game to gamecache (only if not already there)
+      add_gamecache(gameId)
 
     # Create url for redirecting back to page for refresh
     tempUrl = "/gamepage?id=" + str(gameId)

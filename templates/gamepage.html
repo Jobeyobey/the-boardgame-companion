@@ -40,8 +40,8 @@
             <form action="/playlog" id="record" method="post">
                 <h2 id="input-title" class="input-title">Record a session</h2>
                 <select name="result" id="result" form="record" class="select-block">
-                    <option value="win">Win</option>
-                    <option value="loss">Loss</option>
+                    <option value="Win">Win</option>
+                    <option value="Loss">Loss</option>
                 </select>
                 <textarea form="record" name="notes" id="notes" class="textarea" maxlength="280" placeholder="Up to 280 characters"></textarea>
                 <input type="hidden" id="record-id" name="id" value="{{ gameId }}">
