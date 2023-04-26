@@ -3,9 +3,24 @@
 
 
 {% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
+    <div id="overlay">
+        <div id="overlay-container" class="overlay-container">
+            <form action="/playlog" id="record" method="post">
+                <h2 id="overlay-title" class="overlay-title">Playlog</h2>
+                <h3>Date</h3>
+                <p id="overlay-date">dd/mm/yyyy</p>
+                <h3>Result</h3>
+                <p id="overlay-result">Win</p>
+                <h3>Game Notes</h3>
+                <p id="overlay-note">None</p>
+                <button type="button" onclick="overlayOff()" class="button record add btn-strong" type="submit">Done</button>
+            </form>
+        </div>
+    </div>
     <div class="alt-head">
         <h2 class="page-title">Play Log</h2>
     </div>
@@ -15,7 +30,7 @@
             <p>No games logged. Search a game and record a session to fill your playlog!</p>
         {% else %}
             {% for entry in user_log %}
-            <div class="hr-tile-container">
+            <div onclick="tileOverlayOn({{entry}})" id="{{ entry['id'] }}" class="hr-tile-container">
                 <img src="{{ entry['thumb'] }}">
                 <h4 class="title ta">{{ entry['name'] }}</h4>
                 <p class="info ia">{{ entry['time'] }}</p>

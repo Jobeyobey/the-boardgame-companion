@@ -6,6 +6,15 @@ function overlayOff() {
     document.getElementById("overlay").style.display = "none";
 }
 
+function tileOverlayOn(tile) {
+    overlayOn();
+    document.getElementById("overlay-title").innerHTML = tile.name
+    document.getElementById("overlay-date").innerHTML = tile.time
+    document.getElementById("overlay-result").innerHTML = tile.result
+    document.getElementById("overlay-note").innerHTML = tile.note
+    console.log(document.getElementById("input-title").innerHTML)
+}
+
 // Function to convert HTML unicode characters
 function HTMLconvert(str)
 {

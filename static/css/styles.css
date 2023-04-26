@@ -335,7 +335,7 @@ nav {
   margin: 0 0 1rem 0;
 }
 
-.input-title {
+.overlay-title {
   margin: 0 0 1rem 0;
 }
 
@@ -351,6 +351,7 @@ nav {
   right: 0;
   bottom: 0;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2;
 }
 
 .overlay-container {

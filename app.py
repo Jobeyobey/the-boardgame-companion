@@ -238,22 +238,22 @@ def playlog():
 
     # Search playlog db for this user's entries
     connection, db = open_db()
-    statement = "SELECT gameid, result, time, note FROM playlog WHERE userid = (?)"
-    rows = db.execute(statement, (userId,)).fetchall()
+    statement = "SELECT id, gameid, result, time, note FROM playlog WHERE userid = (?)"
+    playlog_rows = db.execute(statement, (userId,)).fetchall()
     close_db(connection, db)
 
-    if rows == []:
+    # Check if user has any playlog entries
+    if playlog_rows == []:
       return render_template("playlog.html", user_log=0)
 
     # Get names and thumbs of games using each unique gameid
     gameIds = []
-    for row in rows:
-      if row[0] not in gameIds:
-        gameIds.append(row[0])
+    for row in playlog_rows:
+      if row[1] not in gameIds:
+        gameIds.append(row[1])
 
+    # Create and execute statement to get names and thumbs from gamecache
     connection, db = open_db()
-
-    # Create and execute statement
     statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
     length = len(gameIds)
     for i in range(1, length):
@@ -271,13 +271,14 @@ def playlog():
 
     # Assign results of playlog to a list of dictionaries
     user_log = [];
-    for row in rows:
+    for row in playlog_rows:
       user_log.append({
-        "name": game_details[row[0]]['name'],
-        "thumb": game_details[row[0]]['thumb'],
-        "result": row[1],
-        "time": row[2],
-        "note": row[3]
+        "id": row[0],
+        "name": game_details[row[1]]['name'],
+        "thumb": game_details[row[1]]['thumb'],
+        "result": row[2],
+        "time": row[3],
+        "note": row[4]
       })
     return render_template("playlog.html", user_log=user_log)
 
