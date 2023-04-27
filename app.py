@@ -34,7 +34,7 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
     insert_statement = (
-      "SELECT username, hash FROM users WHERE username = ?"
+      "SELECT username, hash FROM users WHERE username = ? COLLATE NOCASE"
     )
 
     # Insert data
@@ -53,7 +53,7 @@ def login():
     # Close database cursor and connection
     close_db(connection, db)
 
-    session['username'] = username
+    session['username'] = user[0]['username']
     flash("Logged in")
 
     return redirect("/")
@@ -133,14 +133,6 @@ def index():
     username = session['username']
 
     return render_template("index.html", username=username)
-
-  # # POST
-  # if request.method == "POST":
-  #   # Get user query
-  #   query = request.form.get("query")
-  #   print(query)
-
-  #   return render_template("index.html")
 
 
 @app.route("/collection")
@@ -295,13 +287,30 @@ def friends():
 def search():
   #POST
   if request.method == "POST":
-    # Get user query
+    # Get user query and search type
     query = request.form.get("query")
+    type = request.form.get("search-type")
+
+    # Make requested search - Boardgames or Users
+    if type == "boardgames":
+      return render_template("search.html", query=query)
+    else:
+      # User Search - Check database for users matching query
+      connection, db = open_db()
+      statement = "SELECT username FROM users WHERE username LIKE (?)"
+      query = "%" + query + "%"
+      user_rows = db.execute(statement, (query,)).fetchall()
+      close_db(connection, db)
+      users = []
+      for user in user_rows:
+        if user[0] != session['username']:
+          users.append({
+            "user": user[0]
+          })
+      return render_template("searchusers.html", users=users)
     
-    return render_template("search.html", query=query)
-  
   #GET
-  redirect("/")
+  return redirect("/")
   
   
 @app.route("/gamepage", methods=["GET", "POST"])

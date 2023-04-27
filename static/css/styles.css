@@ -422,11 +422,6 @@ hr {
   .gamepage-info::before {
     content: "";
   }
-  hr {
-    margin: 1rem 0rem 1rem -2rem;
-    width: 100vw;
-    overflow: hidden;
-  }
 }
 
 @media (max-width: 560px) {
@@ -566,6 +561,18 @@ hr {
 .tiles::after {
   content: "";
   min-width: 14.5rem;
+}
+
+@media (max-width: 875px) {
+  .tiles {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 562px) {
+  .tiles {
+    justify-content: center;
+  }
 }
 
 .tile-container {

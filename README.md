@@ -20,9 +20,17 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - Find generic profile pictures
     - Allow user to pick a picture
     - Stretch goal: Allow a user to upload a SQUARE picture
-- Refine styles
+- Create something that catches API errors
+    - Decorator?
+    - Check for response header and display temporary holding page with timer
+- Refine Everything
     - Playlog overlay
-    - Other?
+    - Other styles
+    - Search when no results (boardgames and users)
+    - Username is case-sensitive
+    - Playlog should have most recent game at top
+    - Search needs to have multiple pages when too many results
+    - 'Loading...' when searching, to prevent user refreshing
 
 ## Bibliography
 

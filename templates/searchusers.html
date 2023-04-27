@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block main %}
+    <h1>Results</h1>
+    <hr class="alt-hr">
+    <div id="page-content-container">
+        <div class="tiles">
+            {% for user in users %}
+            <div class="tile-container">
+                <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="tile-title">{{ user['user'] }}</h5>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
