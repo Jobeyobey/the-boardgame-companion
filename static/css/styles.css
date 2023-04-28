@@ -212,12 +212,6 @@ nav {
   height: 0.5rem;
 }
 
-@media (min-width: 992px) {
-  ::-webkit-scrollbar {
-    height: 0;
-  }
-}
-
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 5px;
@@ -358,7 +352,7 @@ nav {
   padding: 2rem;
   background: white;
   width: 320px;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 .select-block {
@@ -455,13 +449,16 @@ hr {
 .components {
   display: flex;
   gap: 1rem;
-  overflow-x: scroll;
+  overflow-x: auto;
   flex-shrink: 0;
 }
 
 .component-container {
+  flex-grow: 0;
+  flex-shrink: 0;
   background-color: #e1e1e1;
   min-width: 10rem;
+  max-height: 282px;
   border-radius: 5px;
   transition-duration: 0.3s;
 }
@@ -474,6 +471,7 @@ hr {
 
 .component-container img {
   width: 100%;
+  max-height: 200px;
   border-radius: 5px 5px 0 0;
 }
 

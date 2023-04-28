@@ -17,7 +17,7 @@
                 <p id="overlay-result">Win</p>
                 <h3>Game Notes</h3>
                 <p id="overlay-note">None</p>
-                <button type="button" onclick="overlayOff()" class="button record add btn-strong" type="submit">Done</button>
+                <button type="button" onclick="overlayOff()" class="button record add btn-strong">Done</button>
             </form>
         </div>
     </div>
@@ -30,7 +30,7 @@
             <p>No games logged. Search a game and record a session to fill your playlog!</p>
         {% else %}
             {% for entry in user_log %}
-            <div onclick="tileOverlayOn({{entry}})" id="{{ entry['id'] }}" class="hr-tile-container">
+            <div onclick="playOverlayOn({{entry}})" id="{{ entry['id'] }}" class="hr-tile-container">
                 <img src="{{ entry['thumb'] }}">
                 <h4 class="title ta">{{ entry['name'] }}</h4>
                 <p class="info ia">{{ entry['time'] }}</p>

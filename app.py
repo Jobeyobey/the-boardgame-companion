@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -129,44 +129,81 @@ def index():
   # GET
   if request.method == "GET":
 
-    # Get username from session
-    username = session['username']
+    # Check if viewing own profile or someone else's, assign username
+    if request.args:
+      username = request.args['username']
+    else:
+      # Viewing own profile
+      username = session['username']
 
-    return render_template("index.html", username=username)
+    # Get id and username
+    connection, db = open_db()
+    statement = "SELECT id, username FROM users WHERE username = (?)"
+    user_rows = db.execute(statement, (username,)).fetchall()
+    close_db(connection, db)
+
+    # Check user exists
+    if user_rows == []:
+      return redirect("/")
+    
+    for row in user_rows:
+      userId = row[0]
+
+    # Get playlog entries
+      playlog = get_user_playlog(userId)
+      if playlog == []:
+        user_log = False
+      else:
+        user_log = create_user_log(playlog)
+
+    # Get collection
+      user_collection = get_user_collection(userId)
+      collection = fetch_game_cache(user_collection)
+
+    # Get friends
+      # 
+      # 
+      # 
+
+    # Calculate user stats
+    user_stats = {}
+
+    # Collection Size
+    user_stats['totalGames'] = len(user_collection)
+
+    # Game Plays
+    if playlog:
+      user_stats['gamesPlayed'] = len(user_log)
+    else:
+      user_stats['gamesPlayed'] = []
+
+    # Unique Game Plays, wins and losses
+    user_stats['wins'] = 0
+    user_stats['losses'] = 0
+    unique_games = []
+    for play in user_log:
+      # Unique Games
+      if play['gameid'] not in unique_games:
+        unique_games.append(play['gameid'])
+      # Wins and Losses
+      if play['result'] == "Win":
+        user_stats['wins'] += 1
+      else:
+        user_stats['losses'] += 1
+    user_stats['uniqueGames'] = len(unique_games)
+      
+    # Win/Loss Ratio
+    user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
+
+    return render_template("index.html", username=username, collection=collection, user_log=user_log)
 
 
 @app.route("/collection")
 @login_required
 def collection():
-
-  # Get userId
   userId = get_user_id(session['username'])
-    
-  # Get user's collection
-  connection, db = open_db()
-  statement = "SELECT gameid FROM collections WHERE userid = (?)"
-  collection_rows = db.execute(statement, (userId,)).fetchall()
-  user_collection = []
-  for row in collection_rows:
-    user_collection.append(row['gameid'])
-  close_db(connection, db)
-
-  # Get gamenames and thumbs from gamecache
-  connection, db = open_db()
-  statement = "SELECT name, image, gameid FROM gamecache WHERE gameid = (?)"
-  length = len(user_collection)
-  if length > 1:
-    for i in range(1, length):
-      statement = statement + " OR gameid = (?)"
-  cache_rows = db.execute(statement, user_collection).fetchall()
-  close_db(connection, db)
-  games = []
-  for row in cache_rows:
-    games.append({
-                  'name': row['name'],
-                  'thumb': row['image'],
-                  'gameid': "/gamepage?id=" + str(row['gameid'])
-                })
+  user_collection = get_user_collection(userId)
+  games = fetch_game_cache(user_collection)
 
   return render_template("collection.html", games=games)
 
@@ -227,51 +264,14 @@ def playlog():
   # Displaying playlog page
   if request.method == "GET":
     userId = get_user_id(session['username'])
-
-    # Search playlog db for this user's entries
-    connection, db = open_db()
-    statement = "SELECT id, gameid, result, time, note FROM playlog WHERE userid = (?)"
-    playlog_rows = db.execute(statement, (userId,)).fetchall()
-    close_db(connection, db)
+    playlog_rows = get_user_playlog(userId)
 
     # Check if user has any playlog entries
     if playlog_rows == []:
       return render_template("playlog.html", user_log=0)
-
-    # Get names and thumbs of games using each unique gameid
-    gameIds = []
-    for row in playlog_rows:
-      if row[1] not in gameIds:
-        gameIds.append(row[1])
-
-    # Create and execute statement to get names and thumbs from gamecache
-    connection, db = open_db()
-    statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
-    length = len(gameIds)
-    for i in range(1, length):
-      statement = statement + "OR gameid = (?)"
-    cache_rows = db.execute(statement, gameIds).fetchall()
-    close_db(connection, db)
     
-    # Get names and thumbs from above result
-    game_details = {}
-    for row in cache_rows:
-      game_details[row[0]] = {
-          "name": row[1],
-          "thumb": row[2]
-        }
+    user_log = create_user_log(playlog_rows)
 
-    # Assign results of playlog to a list of dictionaries
-    user_log = [];
-    for row in playlog_rows:
-      user_log.append({
-        "id": row[0],
-        "name": game_details[row[1]]['name'],
-        "thumb": game_details[row[1]]['thumb'],
-        "result": row[2],
-        "time": row[3],
-        "note": row[4]
-      })
     return render_template("playlog.html", user_log=user_log)
 
 
@@ -367,6 +367,12 @@ def gamepage():
   if request.method == "GET":
 
     return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
+  
+
+@app.route("/addfriend", methods=["POST"])
+@login_required
+def addfriend():
+  print("SENT")
 
 
 
