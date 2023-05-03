@@ -12,10 +12,10 @@ function playOverlayOn(tile) {
     document.getElementById("overlay-date").innerHTML = tile.time
     document.getElementById("overlay-result").innerHTML = tile.result
     document.getElementById("overlay-note").innerHTML = tile.note
+}
 
 // Function to convert HTML unicode characters
-function HTMLconvert(str)
-{
+function HTMLconvert(str) {
 str = str.replace(/&amp;#10;/g, "<br>");
 str = str.replace(/&amp;quot;/g, '"');
 return str;

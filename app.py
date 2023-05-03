@@ -158,7 +158,10 @@ def index():
 
     # Get collection
       user_collection = get_user_collection(userId)
-      collection = fetch_game_cache(user_collection)
+      if user_collection:
+        collection = fetch_game_cache(user_collection)
+      else:
+        collection = False
 
     # Get friends
       # 
@@ -181,19 +184,32 @@ def index():
     user_stats['wins'] = 0
     user_stats['losses'] = 0
     unique_games = []
-    for play in user_log:
-      # Unique Games
-      if play['gameid'] not in unique_games:
-        unique_games.append(play['gameid'])
-      # Wins and Losses
-      if play['result'] == "Win":
-        user_stats['wins'] += 1
-      else:
-        user_stats['losses'] += 1
+
+    # If user has a playlog
+    if user_log:
+      for play in user_log:
+        # Unique Games
+        if play['gameid'] not in unique_games:
+          unique_games.append(play['gameid'])
+        # Wins and Losses
+        if play['result'] == "Win":
+          user_stats['wins'] += 1
+        else:
+          user_stats['losses'] += 1
     user_stats['uniqueGames'] = len(unique_games)
       
-    # Win/Loss Ratio
-    user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
+    # Win/Loss Ratio - If no games played
+    if user_stats['wins'] == 0 and user_stats['losses'] == 0:
+      user_stats['ratio'] = 0
+    # elif no wins
+    elif user_stats['wins'] == 0:
+      user_stats['ratio'] = 0
+    # elif no losses
+    elif user_stats['losses'] == 0:
+      user_stats['ratio'] = "∞"
+    # Else, calculate ratio
+    else:
+      user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
 
     return render_template("index.html", username=username, collection=collection, user_log=user_log)
 

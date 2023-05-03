@@ -8,15 +8,15 @@
 {% block main %}
     <div class="header">
         <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
-        <div class="head-info">
+        <div class="header-info">
             <h1 class="head-name">{{ username }}</h1>
-            <div class="info-container">
-                <div class="info-1">
+            <div class="gamepage-info">
+                <div class="info-left">
                     <p class="header-stats">Collection Size: 00</p>
                     <p class="header-stats">Game Plays: 00</p>
                     <p class="header-stats">Unique Games Played: 00</p>
                 </div>
-                <div class="info-2">
+                <div class="info-right">
                     <p class="header-stats">Wins: 00</p>
                     <p class="header-stats">Losses: 00</p>
                     <p class="header-stats">W/L Ratio: 00</p>
@@ -30,21 +30,21 @@
         <h2 class="feature-title">Play Log</h2>
         <div class="components">
             {% if user_log %}
-            {% for log in user_log %}
-                <div class="component-container">
-                    <img src="{{ log['thumb'] }}">
-                    <h5 class="feature-component-title">{{ log['name'] }}</h5>
-                    <p class="feature-component-text">{{ log['time'] }}</p>
-                    <p class="feature-component-text">Result: {{ log['result'] }}</p>
-                </div>
-            {% endfor %}
-            {% else %}
-                <div class="component-container">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
-                    <h5 class="feature-component-title">Nothing here</h5>
-                    <p class="feature-component-text">Nothing here</p>
-                    <p class="feature-component-text">Nothing here</p>
-                </div>
+                {% for log in user_log %}
+                    <div class="component-container">
+                        <img src="{{ log['thumb'] }}">
+                        <h5 class="feature-component-title">{{ log['name'] }}</h5>
+                        <p class="feature-component-text">{{ log['time'] }}</p>
+                        <p class="feature-component-text">Result: {{ log['result'] }}</p>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <div class="component-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <h5 class="feature-component-title">Nothing here</h5>
+                        <p class="feature-component-text">Nothing here</p>
+                        <p class="feature-component-text">Nothing here</p>
+                    </div>
             {% endif %}
         </div>
     </div>
@@ -52,12 +52,21 @@
     <div class="feature-row">
         <h2 class="feature-title">Collection</h2>
         <div class="components">
-            {% for game in collection %}
-                <div class="component-container">
-                    <img src="{{ game['thumb'] }}">
-                    <h5 class="feature-component-title">{{ game['name'] }}</h5>
-                </div>
-            {% endfor %}
+            {% if collection %}
+                {% for game in collection %}
+                    <div class="component-container">
+                        <img src="{{ game['thumb'] }}">
+                        <h5 class="feature-component-title">{{ game['name'] }}</h5>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <div class="component-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <h5 class="feature-component-title">Nothing here</h5>
+                        <p class="feature-component-text">Nothing here</p>
+                        <p class="feature-component-text">Nothing here</p>
+                    </div>
+            {% endif %}
         </div>
     </div>
     <!-- Friends -->
