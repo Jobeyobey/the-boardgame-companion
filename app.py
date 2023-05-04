@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
 from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -132,9 +132,11 @@ def index():
     # Check if viewing own profile or someone else's, assign username
     if request.args:
       username = request.args['username']
+      own_profile = False
     else:
       # Viewing own profile
       username = session['username']
+      own_profile = True
 
     # Get id and username
     connection, db = open_db()
@@ -211,7 +213,7 @@ def index():
     else:
       user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
 
-    return render_template("index.html", username=username, collection=collection, user_log=user_log)
+    return render_template("index.html", own_profile=own_profile, username=username, collection=collection, user_log=user_log)
 
 
 @app.route("/collection")
@@ -385,10 +387,17 @@ def gamepage():
     return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
   
 
-@app.route("/addfriend", methods=["POST"])
+@app.route("/updatefriend", methods=["GET"])
 @login_required
 def addfriend():
   print("SENT")
+
+  myResponse = make_response('Response')
+  myResponse.headers['customHeader'] = 'This is a custom header'
+  myResponse.status_code = 200
+  myResponse.mimeType = 'text/plain'
+
+  return myResponse
 
 
 

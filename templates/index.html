@@ -3,13 +3,19 @@
 {% block title %}Home{% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
     <div class="header">
         <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
         <div class="header-info">
-            <h1 class="head-name">{{ username }}</h1>
+            <div class="head-name-container">
+                <h1 class="head-name">{{ username }}</h1>
+                {% if not own_profile %}
+                    <button onclick="updateFriend()" class="button add btn-strong">Add Friend</button>
+                {% endif %}
+            </div>
             <div class="gamepage-info">
                 <div class="info-left">
                     <p class="header-stats">Collection Size: 00</p>

@@ -20,3 +20,14 @@ str = str.replace(/&amp;#10;/g, "<br>");
 str = str.replace(/&amp;quot;/g, '"');
 return str;
 }
+
+function updateFriend() {
+    var req = new XMLHttpRequest();
+
+    // var url = `/updatefriend?action=${action}&user1=${user}&user2=${user2}`;
+
+    req.open("GET", "/updatefriend", false)
+    req.send()
+
+    console.log(req.status)
+}
