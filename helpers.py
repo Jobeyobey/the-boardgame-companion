@@ -179,3 +179,25 @@ def create_user_log(playlog):
       "note": row[4]
     })
   return user_log
+
+
+def get_friend_list(userId):
+  connection, db = open_db()
+  statement = "\
+  SELECT userid1, userid2, status \
+  FROM friends \
+  WHERE userid1 = (?) \
+  OR userid2 = (?)"
+
+  friend_rows = db.execute(statement, (userId, userId)).fetchall()
+  close_db(connection, db)
+
+  friendList = []
+  for row in friend_rows:
+    friendList.append({
+      "user1": row[0],
+      "user2": row[1],
+      "status": row[2]
+    })
+
+  return friendList

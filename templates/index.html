@@ -13,7 +13,16 @@
             <div class="head-name-container">
                 <h1 class="head-name">{{ username }}</h1>
                 {% if not own_profile %}
-                    <button onclick="updateFriend()" class="button add btn-strong">Add Friend</button>
+                    {% if relation == "friends" %}
+                        <button onclick="updateFriend()" class="button remove btn-strong">Remove Friend</button>
+                    {% elif relation == "requestee" %}
+                        <button onclick="updateFriend()" class="button remove btn-strong">Cancel Friend Request</button>
+                    {% elif relation == "requested" %}
+                        <button onclick="updateFriend()" class="button add btn-strong">Accept Friend</button>
+                        <button onclick="updateFriend()" class="button remove btn-strong">Reject</button>
+                    {% else %}
+                        <button onclick="updateFriend()" class="button add btn-strong">Add Friend</button>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="gamepage-info">

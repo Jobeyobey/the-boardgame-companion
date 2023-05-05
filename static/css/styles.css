@@ -324,7 +324,7 @@ nav {
 
 .head-name-container {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .head-name {

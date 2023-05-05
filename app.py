@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -151,19 +151,43 @@ def index():
     for row in user_rows:
       userId = row[0]
 
+    # Check friend status if viewing someone's profile
+    if not own_profile:
+      loggedInId = get_user_id(session['username'])
+      friendList = get_friend_list(loggedInId)
+      for item in friendList:
+        if ('user1', loggedInId) in item.items() and ('user2', userId) in item.items():
+          relation = item
+          break
+        elif ('user1', userId) in item.items() and ('user2', loggedInId) in item.items():
+          relation = item
+          break
+        else:
+          relation = False
+
+      if relation:
+        if relation['status'] == 'friends':
+          relation = "friends"
+        elif relation['status'] == "pending" and relation['user1'] == loggedInId:
+          relation = "requestee"
+        else:
+          relation = "requested"
+
+      print(relation)
+
     # Get playlog entries
-      playlog = get_user_playlog(userId)
-      if playlog == []:
-        user_log = False
-      else:
-        user_log = create_user_log(playlog)
+    playlog = get_user_playlog(userId)
+    if playlog == []:
+      user_log = False
+    else:
+      user_log = create_user_log(playlog)
 
     # Get collection
-      user_collection = get_user_collection(userId)
-      if user_collection:
-        collection = fetch_game_cache(user_collection)
-      else:
-        collection = False
+    user_collection = get_user_collection(userId)
+    if user_collection:
+      collection = fetch_game_cache(user_collection)
+    else:
+      collection = False
 
     # Get friends
       # 
@@ -213,7 +237,7 @@ def index():
     else:
       user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
 
-    return render_template("index.html", own_profile=own_profile, username=username, collection=collection, user_log=user_log)
+    return render_template("index.html", own_profile=own_profile, username=username, collection=collection, user_log=user_log, relation=relation)
 
 
 @app.route("/collection")
@@ -392,10 +416,9 @@ def gamepage():
 def addfriend():
   print("SENT")
 
+# Create response for updateFriend function
   myResponse = make_response('Response')
-  myResponse.headers['customHeader'] = 'This is a custom header'
   myResponse.status_code = 200
-  myResponse.mimeType = 'text/plain'
 
   return myResponse
 

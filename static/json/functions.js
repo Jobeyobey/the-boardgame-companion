@@ -24,7 +24,7 @@ return str;
 function updateFriend() {
     var req = new XMLHttpRequest();
 
-    // var url = `/updatefriend?action=${action}&user1=${user}&user2=${user2}`;
+    // var url = `/updatefriend?action=${action}&user2=${user2}`;
 
     req.open("GET", "/updatefriend", false)
     req.send()
