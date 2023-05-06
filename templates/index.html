@@ -14,14 +14,14 @@
                 <h1 class="head-name">{{ username }}</h1>
                 {% if not own_profile %}
                     {% if relation == "friends" %}
-                        <button onclick="updateFriend()" class="button remove btn-strong">Remove Friend</button>
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Remove Friend</button>
                     {% elif relation == "requestee" %}
-                        <button onclick="updateFriend()" class="button remove btn-strong">Cancel Friend Request</button>
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Cancel Friend Request</button>
                     {% elif relation == "requested" %}
-                        <button onclick="updateFriend()" class="button add btn-strong">Accept Friend</button>
-                        <button onclick="updateFriend()" class="button remove btn-strong">Reject</button>
+                        <button onclick="updateFriend('accept', '{{ username }}')" class="button add btn-strong">Accept Friend</button>
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Reject</button>
                     {% else %}
-                        <button onclick="updateFriend()" class="button add btn-strong">Add Friend</button>
+                        <button onclick="updateFriend('add', '{{ username }}')" class="button add btn-strong">Add Friend</button>
                     {% endif %}
                 {% endif %}
             </div>

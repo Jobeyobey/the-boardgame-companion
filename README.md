@@ -31,6 +31,7 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - Playlog should have most recent game at top
     - Search needs to have multiple pages when too many results
     - 'Loading...' when searching, to prevent user refreshing
+    - User is never auto-logged-out
 
 ## Bibliography
 
@@ -47,3 +48,25 @@ https://www.oreilly.com/library/view/python-cookbook/0596001673/ch03s07.html
 
 ### Xml to dictionary for Python
 https://github.com/martinblech/xmltodict
+
+
+### How to use Flask.make_response()
+https://www.educative.io/answers/what-is-flaskmakeresponse
+
+
+
+
+### Friend Table Layout
+
+userid1 = requestee
+userid2 = requested
+status = status
+
+4 possible options:
+- Friends (user1, user2, friends)
+- Not Friends (not listed in table)
+- Request Sent (user1, user2, pending)
+- Request Received (user1, user2, pending)
+
+When user1 is the user logged in, they are the sender of request
+When user2 is the user logged in, they are the recipient of request

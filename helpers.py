@@ -66,7 +66,6 @@ def validate_password(password, confirm):
 
 def get_user_id(username):
   connection, db = open_db()
-  username = session['username']
   statement = "SELECT id FROM users WHERE username = (?)"
   userId_rows = db.execute(statement, (username,)).fetchall()
   close_db(connection, db)

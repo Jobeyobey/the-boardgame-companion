@@ -152,6 +152,7 @@ def index():
       userId = row[0]
 
     # Check friend status if viewing someone's profile
+    relation = False
     if not own_profile:
       loggedInId = get_user_id(session['username'])
       friendList = get_friend_list(loggedInId)
@@ -162,9 +163,8 @@ def index():
         elif ('user1', userId) in item.items() and ('user2', loggedInId) in item.items():
           relation = item
           break
-        else:
-          relation = False
 
+      # Set relation to simple string for easy access in Jinja
       if relation:
         if relation['status'] == 'friends':
           relation = "friends"
@@ -173,7 +173,9 @@ def index():
         else:
           relation = "requested"
 
-      print(relation)
+    # If own profile, set 'relation' so error isn't thrown on render_template
+    else:
+      relation = False
 
     # Get playlog entries
     playlog = get_user_playlog(userId)
@@ -414,7 +416,27 @@ def gamepage():
 @app.route("/updatefriend", methods=["GET"])
 @login_required
 def addfriend():
-  print("SENT")
+  action = request.args["action"]
+  user1 = get_user_id(session['username'])
+  user2 = get_user_id(request.args["user2"])
+
+  connection, db = open_db()
+  if action == "add":
+    statement = "INSERT INTO friends (userid1, userid2, status) VALUES ((?), (?), 'pending')"
+    db.execute(statement, (user1, user2))
+  elif action == "remove": 
+    statement = "DELETE FROM friends \
+      WHERE userid1 = (?) AND userid2=(?) OR \
+      userid1 = (?) AND userid2 = (?)"
+    db.execute(statement, (user1, user2, user2, user1)).fetchall()
+  elif action == "accept":
+    statement = "UPDATE friends SET status = 'friends' WHERE userid1 = (?) AND userid2 = (?)"
+    db.execute(statement, (user2, user1))
+  connection.commit()
+  close_db(connection, db)
+
+
+    
 
 # Create response for updateFriend function
   myResponse = make_response('Response')

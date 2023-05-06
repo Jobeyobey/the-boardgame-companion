@@ -21,12 +21,12 @@ str = str.replace(/&amp;quot;/g, '"');
 return str;
 }
 
-function updateFriend() {
+function updateFriend(action, user2) {
     var req = new XMLHttpRequest();
 
-    // var url = `/updatefriend?action=${action}&user2=${user2}`;
+    var url = `/updatefriend?action=${action}&user2=${user2}`;
 
-    req.open("GET", "/updatefriend", false)
+    req.open("GET", url, false)
     req.send()
 
     console.log(req.status)
