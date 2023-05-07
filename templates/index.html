@@ -3,23 +3,38 @@
 {% block title %}Home{% endblock %}
 
 {% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
     <div class="header">
         <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
-        <div class="head-info">
-            <h1 class="head-name">{{ username }}</h1>
-            <div class="info-container">
-                <div class="info-1">
-                    <p class="header-stats">Collection Size: 00</p>
-                    <p class="header-stats">Game Plays: 00</p>
-                    <p class="header-stats">Unique Game Plays: 00</p>
+        <div class="header-info">
+            <div class="head-name-container">
+                <h1 class="head-name">{{ username }}</h1>
+                {% if not own_profile %}
+                    {% if relation == "friends" %}
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Remove Friend</button>
+                    {% elif relation == "requestee" %}
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Cancel Friend Request</button>
+                    {% elif relation == "requested" %}
+                        <button onclick="updateFriend('accept', '{{ username }}')" class="button add btn-strong">Accept Friend</button>
+                        <button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Reject</button>
+                    {% else %}
+                        <button onclick="updateFriend('add', '{{ username }}')" class="button add btn-strong">Add Friend</button>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="gamepage-info">
+                <div class="info-left">
+                    <p class="header-stats">Collection Size: {{ userstats['totalGames'] }}</p>
+                    <p class="header-stats">Game Plays: {{ userstats['gamesPlayed'] }}</p>
+                    <p class="header-stats">Unique Games Played: {{ userstats['uniqueGames'] }}</p>
                 </div>
-                <div class="info-2">
-                    <p class="header-stats">Wins: 00</p>
-                    <p class="header-stats">Losses: 00</p>
-                    <p class="header-stats">W/L Ratio: 00</p>
+                <div class="info-right">
+                    <p class="header-stats">Wins: {{ userstats['wins'] }}</p>
+                    <p class="header-stats">Losses: {{ userstats['losses'] }}</p>
+                    <p class="header-stats">Win Rate: {{ userstats['winRate'] }}%</p>
                 </div>
             </div>
         </div>
@@ -29,88 +44,56 @@
     <div class="feature-row">
         <h2 class="feature-title">Play Log</h2>
         <div class="components">
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-                <p class="feature-component-text">Played: 1 day ago</p>
-                <p class="feature-component-text">Result: Win</p>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-                <p class="feature-component-text">Played: 1 day ago</p>
-                <p class="feature-component-text">Result: Win</p>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-                <p class="feature-component-text">Played: 1 day ago</p>
-                <p class="feature-component-text">Result: Win</p>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-                <p class="feature-component-text">Played: 1 day ago</p>
-                <p class="feature-component-text">Result: Win</p>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-                <p class="feature-component-text">Played: 1 day ago</p>
-                <p class="feature-component-text">Result: Win</p>
-            </div>
+            {% if user_log %}
+                {% for log in user_log %}
+                    <div class="component-container">
+                        <img src="{{ log['thumb'] }}">
+                        <h5 class="feature-component-title">{{ log['name'] }}</h5>
+                        <p class="feature-component-text">{{ log['time'] }}</p>
+                        <p class="feature-component-text">Result: {{ log['result'] }}</p>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <div class="component-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <h5 class="feature-component-title">Nothing here</h5>
+                        <p class="feature-component-text">Nothing here</p>
+                        <p class="feature-component-text">Nothing here</p>
+                    </div>
+            {% endif %}
         </div>
     </div>
     <!-- Collection -->
     <div class="feature-row">
         <h2 class="feature-title">Collection</h2>
         <div class="components">
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
+            {% if collection %}
+                {% for game in collection %}
+                    <div class="component-container">
+                        <img src="{{ game['thumb'] }}">
+                        <h5 class="feature-component-title">{{ game['name'] }}</h5>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <div class="component-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <h5 class="feature-component-title">Nothing here</h5>
+                        <p class="feature-component-text">Nothing here</p>
+                        <p class="feature-component-text">Nothing here</p>
+                    </div>
+            {% endif %}
         </div>
     </div>
     <!-- Friends -->
     <div class="feature-row">
         <h2 class="feature-title">Friends</h2>
         <div class="components">
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
-            <div class="component-container">
-                <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="feature-component-title">Spirit Island</h5>
-            </div>
+            {% for friend in friends %}
+                <div class="component-container">
+                    <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                    <h5 class="feature-component-title">{{ friend }}</h5>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

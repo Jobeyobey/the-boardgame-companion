@@ -212,12 +212,6 @@ nav {
   height: 0.5rem;
 }
 
-@media (min-width: 992px) {
-  ::-webkit-scrollbar {
-    height: 0;
-  }
-}
-
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 5px;
@@ -316,6 +310,7 @@ nav {
 .gamepage-info {
   display: flex;
   justify-content: space-between;
+  margin-top: 0.5rem;
 }
 
 .gamepage-info::after {
@@ -327,8 +322,13 @@ nav {
   flex-direction: column;
 }
 
+.head-name-container {
+  display: flex;
+  gap: 1rem;
+}
+
 .head-name {
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .head-stats {
@@ -358,7 +358,7 @@ nav {
   padding: 2rem;
   background: white;
   width: 320px;
-  border-radius: 2px;
+  border-radius: 6px;
 }
 
 .select-block {
@@ -409,6 +409,11 @@ hr {
   .head-username {
     text-align: center;
   }
+  .head-name-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
   .head-name {
     margin: 1.5rem 0 0 0;
     text-align: center;
@@ -421,11 +426,6 @@ hr {
   }
   .gamepage-info::before {
     content: "";
-  }
-  hr {
-    margin: 1rem 0rem 1rem -2rem;
-    width: 100vw;
-    overflow: hidden;
   }
 }
 
@@ -460,13 +460,16 @@ hr {
 .components {
   display: flex;
   gap: 1rem;
-  overflow-x: scroll;
+  overflow-x: auto;
   flex-shrink: 0;
 }
 
 .component-container {
+  flex-grow: 0;
+  flex-shrink: 0;
   background-color: #e1e1e1;
   min-width: 10rem;
+  max-height: 282px;
   border-radius: 5px;
   transition-duration: 0.3s;
 }
@@ -479,6 +482,7 @@ hr {
 
 .component-container img {
   width: 100%;
+  max-height: 200px;
   border-radius: 5px 5px 0 0;
 }
 
@@ -566,6 +570,18 @@ hr {
 .tiles::after {
   content: "";
   min-width: 14.5rem;
+}
+
+@media (max-width: 875px) {
+  .tiles {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 562px) {
+  .tiles {
+    justify-content: center;
+  }
 }
 
 .tile-container {

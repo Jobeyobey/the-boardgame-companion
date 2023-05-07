@@ -3,6 +3,7 @@
 
 
 {% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -12,51 +13,54 @@
     </div>
     <hr class="alt-hr">
     <div class="tiles">
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Uno</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Dos</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Tres</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Cuatro</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Cinco</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Seis</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Siete</h5>
-        </div>
-        <div class="tile-container">
-            <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-            <h5 class="tile-title">Gamer Ocho</h5>
-        </div>
+        {% for friend in friends %}
+        <a href="/?username={{ friend['username'] }}">
+            <div class="tile-container">
+                <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                <h5 class="tile-title">{{ friend['username'] }}</h5>
+            </div>
+        </a>
+        {% endfor %}
     </div>
     <h2 class="page-subtitle">Pending Requests</h2>
     <hr class="alt-hr">
     <div class="tiles">
-        <div class="request-tile">
-            <div class="request-usertile-container">
-                <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                <h5 class="request-tile-title">Gamer Nueve</h5>
+        {% for user in received %}
+            <div class="request-tile">
+                <a href="/?username={{ user['username'] }}">
+                    <div class="request-usertile-container">
+                        <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                        <h5 class="request-tile-title">{{ user['username'] }}</h5>
+                    </div>
+                </a>
+                <div class="friend-response-container">
+                    <button type="button" class="friend-response accept" onclick="updateFriend('accept', '{{ user["username"] }}')">Accept</button>
+                    <button type="button" class="friend-response reject" onclick="updateFriend('remove', '{{ user["username"] }}')">Reject</button>
+                </div>
             </div>
-            <div class="friend-response-container">
-                <button type="button" class="friend-response accept" onclick="acceptFunction()">Accept</button>
-                <button type="button" class="friend-response reject" onclick="acceptFunction()">Reject</button>
+        {% endfor %}
+        {% for user in requested %}
+            <div class="request-tile">
+                <a href="/?username={{ user['username'] }}">
+                    <div class="request-usertile-container">
+                        <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
+                        <h5 class="request-tile-title">{{ user['username'] }}</h5>
+                    </div>
+                </a>
+                <div class="friend-response-container">
+                    <button type="button" class="friend-response reject" onclick="updateFriend('remove', '{{ user["username"] }}')">Cancel Request</button>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
+
+
+<button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Remove Friend</button>
+
+<button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Cancel Friend Request</button>
+
+<button onclick="updateFriend('accept', '{{ username }}')" class="button add btn-strong">Accept Friend</button>
+<button onclick="updateFriend('remove', '{{ username }}')" class="button remove btn-strong">Reject</button>
+
+<button onclick="updateFriend('add', '{{ username }}')" class="button add btn-strong">Add Friend</button>

@@ -3,26 +3,25 @@
 Create an app to keep track of your boardgame collection. Also you can keep track of games played, as well as see your friends' collections!
 
 ### TODO
-- Index page
-    - Display stats (update styling to multi-columns)
-    - Display playlog
-    - Display collection
-    - Display friends
-- Add Friends
-    - Search users
-    - Add user
-    - Display friends
-    - Accept/Decline request
-    - Display friends owned games on gamepage.html
 - Allow import of collection from BGG
     - ... Not sure yet
 - User profile picture
     - Find generic profile pictures
     - Allow user to pick a picture
     - Stretch goal: Allow a user to upload a SQUARE picture
-- Refine styles
+- Create something that catches API errors
+    - Decorator?
+    - Check for response header and display temporary holding page with timer
+- Refine Everything
+    - Display friends owned games on gamepage.html
     - Playlog overlay
-    - Other?
+    - Other styles
+    - Search when no results (boardgames and users)
+    - Playlog should have most recent game at top
+    - Search needs to have multiple pages when too many results
+    - 'Loading...' when searching, to prevent user refreshing
+    - User is currently never auto-logged-out
+    - 'Cancel Request' on friend page border
 
 ## Bibliography
 
@@ -39,3 +38,7 @@ https://www.oreilly.com/library/view/python-cookbook/0596001673/ch03s07.html
 
 ### Xml to dictionary for Python
 https://github.com/martinblech/xmltodict
+
+
+### How to use Flask.make_response()
+https://www.educative.io/answers/what-is-flaskmakeresponse

@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -34,7 +34,7 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
     insert_statement = (
-      "SELECT username, hash FROM users WHERE username = ?"
+      "SELECT username, hash FROM users WHERE username = ? COLLATE NOCASE"
     )
 
     # Insert data
@@ -53,7 +53,7 @@ def login():
     # Close database cursor and connection
     close_db(connection, db)
 
-    session['username'] = username
+    session['username'] = user[0]['username']
     flash("Logged in")
 
     return redirect("/")
@@ -129,52 +129,145 @@ def index():
   # GET
   if request.method == "GET":
 
-    # Get username from session
-    username = session['username']
+    # Check if viewing own profile or someone else's, assign username
+    if request.args:
+      username = request.args['username']
+      own_profile = False
+    else:
+      # Viewing own profile
+      username = session['username']
+      own_profile = True
 
-    return render_template("index.html", username=username)
+    # Get id and username
+    connection, db = open_db()
+    statement = "SELECT id, username FROM users WHERE username = (?)"
+    user_rows = db.execute(statement, (username,)).fetchall()
+    close_db(connection, db)
 
-  # # POST
-  # if request.method == "POST":
-  #   # Get user query
-  #   query = request.form.get("query")
-  #   print(query)
+    # Check user exists
+    if user_rows == []:
+      flash("Could not find user profile")
+      return redirect("/")
+    
+    for row in user_rows:
+      userId = row[0]
 
-  #   return render_template("index.html")
+    # Check friend status if viewing someone's profile
+    relation = False
+    if not own_profile:
+      loggedInId = get_user_id(session['username'])
+      friendList = get_friend_list(loggedInId)
+      for item in friendList:
+        if ('user1', loggedInId) in item.items() and ('user2', userId) in item.items():
+          relation = item
+          break
+        elif ('user1', userId) in item.items() and ('user2', loggedInId) in item.items():
+          relation = item
+          break
+
+      # Set relation to simple string for easy access in Jinja
+      if relation:
+        if relation['status'] == 'friends':
+          relation = "friends"
+        elif relation['status'] == "pending" and relation['user1'] == loggedInId:
+          relation = "requestee"
+        else:
+          relation = "requested"
+
+    # If own profile, set 'relation' so error isn't thrown on render_template
+    else:
+      relation = False
+
+    # Get playlog entries
+    playlog = get_user_playlog(userId)
+    if playlog == []:
+      user_log = False
+    else:
+      user_log = create_user_log(playlog)
+
+    # Get collection
+    user_collection = get_user_collection(userId)
+    if user_collection:
+      collection = fetch_game_cache(user_collection)
+    else:
+      collection = False
+
+    # Get friends
+    friendList = get_friend_list(userId)
+    friendIds = []
+    for friend in friendList:
+      if friend['status'] == 'friends':
+        if friend['user1'] == userId:
+          friendIds.append(friend['user2'])
+        else:
+          friendIds.append(friend['user1'])
+
+    friends = []
+    if friendIds:
+      connection, db = open_db()
+      statement = "SELECT username FROM users WHERE id = (?)"
+      for friend in range(1, len(friendIds)):
+        statement = statement + " OR id = (?)"
+      friend_rows = db.execute(statement, friendIds).fetchall()
+      close_db(connection, db)
+      for row in friend_rows:
+        friends.append(row[0])
+
+    # Calculate user stats
+    user_stats = {}
+
+    # Collection Size
+    user_stats['totalGames'] = len(user_collection)
+
+    # Game Plays
+    if playlog:
+      user_stats['gamesPlayed'] = len(user_log)
+    else:
+      user_stats['gamesPlayed'] = []
+
+    # Unique Game Plays, wins and losses
+    user_stats['wins'] = 0
+    user_stats['losses'] = 0
+    unique_games = []
+
+    # If user has a playlog
+    if user_log:
+      for play in user_log:
+        # Unique Games
+        if play['gameid'] not in unique_games:
+          unique_games.append(play['gameid'])
+        # Wins and Losses
+        if play['result'] == "Win":
+          user_stats['wins'] += 1
+        else:
+          user_stats['losses'] += 1
+    user_stats['uniqueGames'] = len(unique_games)
+      
+    # Win/Loss Ratio - If no games played
+    if user_stats['wins'] == 0 and user_stats['losses'] == 0:
+      user_stats['winRate'] = 0
+    # elif no wins
+    elif user_stats['wins'] == 0:
+      user_stats['winRate'] = 0
+    # elif no losses
+    elif user_stats['losses'] == 0:
+      user_stats['winRate'] = 100
+    # Else, calculate ratio
+    else:
+      user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
+
+    return render_template("index.html", own_profile=own_profile, username=username, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
 
 
 @app.route("/collection")
 @login_required
 def collection():
-
-  # Get userId
   userId = get_user_id(session['username'])
-    
-  # Get user's collection
-  connection, db = open_db()
-  statement = "SELECT gameid FROM collections WHERE userid = (?)"
-  collection_rows = db.execute(statement, (userId,)).fetchall()
-  user_collection = []
-  for row in collection_rows:
-    user_collection.append(row['gameid'])
-  close_db(connection, db)
-
-  # Get gamenames and thumbs from gamecache
-  connection, db = open_db()
-  statement = "SELECT name, image, gameid FROM gamecache WHERE gameid = (?)"
-  length = len(user_collection)
-  if length > 1:
-    for i in range(1, length):
-      statement = statement + " OR gameid = (?)"
-  cache_rows = db.execute(statement, user_collection).fetchall()
-  close_db(connection, db)
-  games = []
-  for row in cache_rows:
-    games.append({
-                  'name': row['name'],
-                  'thumb': row['image'],
-                  'gameid': "/gamepage?id=" + str(row['gameid'])
-                })
+  user_collection = get_user_collection(userId)
+  if user_collection:
+    games = fetch_game_cache(user_collection)
+  else:
+    games = []
 
   return render_template("collection.html", games=games)
 
@@ -235,59 +328,63 @@ def playlog():
   # Displaying playlog page
   if request.method == "GET":
     userId = get_user_id(session['username'])
-
-    # Search playlog db for this user's entries
-    connection, db = open_db()
-    statement = "SELECT id, gameid, result, time, note FROM playlog WHERE userid = (?)"
-    playlog_rows = db.execute(statement, (userId,)).fetchall()
-    close_db(connection, db)
+    playlog_rows = get_user_playlog(userId)
 
     # Check if user has any playlog entries
     if playlog_rows == []:
       return render_template("playlog.html", user_log=0)
-
-    # Get names and thumbs of games using each unique gameid
-    gameIds = []
-    for row in playlog_rows:
-      if row[1] not in gameIds:
-        gameIds.append(row[1])
-
-    # Create and execute statement to get names and thumbs from gamecache
-    connection, db = open_db()
-    statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
-    length = len(gameIds)
-    for i in range(1, length):
-      statement = statement + "OR gameid = (?)"
-    cache_rows = db.execute(statement, gameIds).fetchall()
-    close_db(connection, db)
     
-    # Get names and thumbs from above result
-    game_details = {}
-    for row in cache_rows:
-      game_details[row[0]] = {
-          "name": row[1],
-          "thumb": row[2]
-        }
+    user_log = create_user_log(playlog_rows)
 
-    # Assign results of playlog to a list of dictionaries
-    user_log = [];
-    for row in playlog_rows:
-      user_log.append({
-        "id": row[0],
-        "name": game_details[row[1]]['name'],
-        "thumb": game_details[row[1]]['thumb'],
-        "result": row[2],
-        "time": row[3],
-        "note": row[4]
-      })
     return render_template("playlog.html", user_log=user_log)
 
 
 @app.route("/friends")
 @login_required
 def friends():
-  
-  return render_template("friends.html")
+
+  userId = get_user_id(session['username'])
+
+  # Get friend list
+  friendList = get_friend_list(userId)
+
+  # Split friendlist into friends/friends requested/received
+  friends = []
+  requested = []
+  received = []
+  for relation in friendList:
+    # If friends, add relation to friendlist. Update key to 'user' for easy access later
+    if relation['status'] == 'friends' and relation['user1'] == userId:
+      relation['username'] = relation['user2']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+    elif relation['status'] == 'friends' and relation['user2'] == userId:
+      relation['username'] = relation['user1']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+    # If pending request, move to relevant request/received and update key to 'user' for easy access later.
+    else:
+      if relation['user1'] == userId:
+        relation['username'] = relation['user2']
+        del relation['user1']
+        del relation['user2']
+        requested.append(relation)
+      else:
+        relation['username'] = relation['user1']
+        del relation['user1']
+        del relation['user2']
+        received.append(relation)
+
+  for relation in friends:
+    relation['username'] = get_username(relation['username'])
+  for relation in requested:
+    relation['username'] = get_username(relation['username'])
+  for relation in received:
+    relation['username'] = get_username(relation['username'])
+
+  return render_template("friends.html", friends=friends, requested=requested, received=received)
 
 
 @app.route("/search", methods=["GET", "POST"])
@@ -295,13 +392,30 @@ def friends():
 def search():
   #POST
   if request.method == "POST":
-    # Get user query
+    # Get user query and search type
     query = request.form.get("query")
+    type = request.form.get("search-type")
+
+    # Make requested search - Boardgames or Users
+    if type == "boardgames":
+      return render_template("search.html", query=query)
+    else:
+      # User Search - Check database for users matching query
+      connection, db = open_db()
+      statement = "SELECT username FROM users WHERE username LIKE (?)"
+      query = "%" + query + "%"
+      user_rows = db.execute(statement, (query,)).fetchall()
+      close_db(connection, db)
+      users = []
+      for user in user_rows:
+        if user[0] != session['username']:
+          users.append({
+            "user": user[0]
+          })
+      return render_template("searchusers.html", users=users)
     
-    return render_template("search.html", query=query)
-  
   #GET
-  redirect("/")
+  return redirect("/")
   
   
 @app.route("/gamepage", methods=["GET", "POST"])
@@ -358,7 +472,41 @@ def gamepage():
   if request.method == "GET":
 
     return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
+  
 
+@app.route("/updatefriend", methods=["GET"])
+@login_required
+def updatefriend():
+  action = request.args["action"]
+  user1 = get_user_id(session['username'])
+  user2 = get_user_id(request.args["user2"])
+
+  # If user2 exists
+  if user2:
+    connection, db = open_db()
+    if action == "add":
+      statement2 = "INSERT INTO friends (userid1, userid2, status) VALUES ((?), (?), 'pending')"
+      db.execute(statement2, (user1, user2))
+    elif action == "remove": 
+      statement = "DELETE FROM friends \
+        WHERE userid1 = (?) AND userid2=(?) OR \
+        userid1 = (?) AND userid2 = (?)"
+      db.execute(statement, (user1, user2, user2, user1)).fetchall()
+    elif action == "accept":
+      statement = "UPDATE friends SET status = 'friends' WHERE userid1 = (?) AND userid2 = (?)"
+      db.execute(statement, (user2, user1))
+    connection.commit()
+    close_db(connection, db)
+
+    myResponse = make_response('Successfully updated')
+    myResponse.status_code = 200
+
+  # If user2 does not exist
+  else:
+    myResponse = make_response('Error updating friend list')
+    myResponse.status_code = 400
+
+  return myResponse
 
 
 if __name__ == "__main__":

@@ -3,9 +3,8 @@
 {% block title %}Index{% endblock %}
 
 {% block main %}
-    <!-- If user has requested a search -->
-    {% if query %}
     <h1>Results</h1>
+    <hr class="alt-hr">
     <div id="page-content-container">
     </div>
     <script>
@@ -157,5 +156,4 @@
             }
         }, 10)
     </script>
-    {% endif %}
 {% endblock %}

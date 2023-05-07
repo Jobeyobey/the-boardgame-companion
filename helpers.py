@@ -63,15 +63,31 @@ def validate_password(password, confirm):
     
     return False
 
+
 def get_user_id(username):
   connection, db = open_db()
-  username = session['username']
   statement = "SELECT id FROM users WHERE username = (?)"
   userId_rows = db.execute(statement, (username,)).fetchall()
   close_db(connection, db)
+  
+  userId = False
   for row in userId_rows:
     userId = row['id']
+
   return userId
+
+
+def get_username(id):
+  tupleId = (id,)
+  connection, db = open_db()
+  statement = "SELECT username FROM users WHERE id = (?)"
+  friend_rows = db.execute(statement, tupleId).fetchall()
+  close_db(connection, db)
+  for row in friend_rows:
+    username = row[0]
+  
+  return username
+
 
 def add_gamecache(gameId):
    # Check if game already exists in gamecache
@@ -96,3 +112,106 @@ def add_gamecache(gameId):
       cache_db.execute(insert_statement, data)
       cache_connection.commit()
       close_db(cache_connection, cache_db)
+
+
+def get_user_collection(userId):
+     # Get user's collection
+    connection, db = open_db()
+    statement = "SELECT gameid FROM collections WHERE userid = (?)"
+    collection_rows = db.execute(statement, (userId,)).fetchall()
+    close_db(connection, db)
+    user_collection = []
+    for row in collection_rows:
+      user_collection.append(row['gameid'])
+    return user_collection
+
+
+def fetch_game_cache(user_collection):
+  # Get gamenames and thumbs from gamecache
+  connection, db = open_db()
+  statement = "SELECT name, image, gameid FROM gamecache WHERE gameid = (?)"
+  length = len(user_collection)
+  if length > 1:
+    for i in range(1, length):
+      statement = statement + " OR gameid = (?)"
+  cache_rows = db.execute(statement, user_collection).fetchall()
+  close_db(connection, db)
+  games = []
+  for row in cache_rows:
+    games.append({
+                  'name': row['name'],
+                  'thumb': row['image'],
+                  'gameid': "/gamepage?id=" + str(row['gameid'])
+                })
+  return games
+
+
+def get_user_playlog(userId):
+   # Search playlog db for this user's entries
+  connection, db = open_db()
+  statement = "SELECT id, gameid, result, time, note FROM playlog WHERE userid = (?)"
+  playlog_rows = db.execute(statement, (userId,)).fetchall()
+  close_db(connection, db)
+
+  return playlog_rows
+
+
+def create_user_log(playlog):
+  # Get names and thumbs of games using each unique gameid
+  gameIds = []
+  for row in playlog:
+    if row[1] not in gameIds:
+      gameIds.append(row[1])
+
+  # Create and execute statement to get names and thumbs from gamecache
+  connection, db = open_db()
+  statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
+  length = len(gameIds)
+  for i in range(1, length):
+    statement = statement + "OR gameid = (?)"
+  cache_rows = db.execute(statement, gameIds).fetchall()
+  close_db(connection, db)
+  
+  # Get names and thumbs from above result
+  game_details = {}
+  for row in cache_rows:
+    game_details[row[0]] = {
+        "name": row[1],
+        "thumb": row[2]
+      }
+
+  # Assign results of playlog to a list of dictionaries
+  user_log = [];
+  for row in playlog:
+    user_log.append({
+      "id": row[0],
+      "gameid": row[1],
+      "name": game_details[row[1]]['name'],
+      "thumb": game_details[row[1]]['thumb'],
+      "result": row[2],
+      "time": row[3],
+      "note": row[4]
+    })
+  return user_log
+
+
+def get_friend_list(userId):
+  connection, db = open_db()
+  statement = "\
+  SELECT userid1, userid2, status \
+  FROM friends \
+  WHERE userid1 = (?) \
+  OR userid2 = (?)"
+
+  friend_rows = db.execute(statement, (userId, userId)).fetchall()
+  close_db(connection, db)
+
+  friendList = []
+  for row in friend_rows:
+    friendList.append({
+      "user1": row[0],
+      "user2": row[1],
+      "status": row[2]
+    })
+
+  return friendList
