@@ -69,8 +69,11 @@ def get_user_id(username):
   statement = "SELECT id FROM users WHERE username = (?)"
   userId_rows = db.execute(statement, (username,)).fetchall()
   close_db(connection, db)
+  
+  userId = False
   for row in userId_rows:
     userId = row['id']
+
   return userId
 
 

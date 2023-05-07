@@ -146,6 +146,7 @@ def index():
 
     # Check user exists
     if user_rows == []:
+      flash("Could not find user profile")
       return redirect("/")
     
     for row in user_rows:
@@ -475,29 +476,35 @@ def gamepage():
 
 @app.route("/updatefriend", methods=["GET"])
 @login_required
-def addfriend():
+def updatefriend():
   action = request.args["action"]
   user1 = get_user_id(session['username'])
   user2 = get_user_id(request.args["user2"])
 
-  connection, db = open_db()
-  if action == "add":
-    statement = "INSERT INTO friends (userid1, userid2, status) VALUES ((?), (?), 'pending')"
-    db.execute(statement, (user1, user2))
-  elif action == "remove": 
-    statement = "DELETE FROM friends \
-      WHERE userid1 = (?) AND userid2=(?) OR \
-      userid1 = (?) AND userid2 = (?)"
-    db.execute(statement, (user1, user2, user2, user1)).fetchall()
-  elif action == "accept":
-    statement = "UPDATE friends SET status = 'friends' WHERE userid1 = (?) AND userid2 = (?)"
-    db.execute(statement, (user2, user1))
-  connection.commit()
-  close_db(connection, db)
+  # If user2 exists
+  if user2:
+    connection, db = open_db()
+    if action == "add":
+      statement2 = "INSERT INTO friends (userid1, userid2, status) VALUES ((?), (?), 'pending')"
+      db.execute(statement2, (user1, user2))
+    elif action == "remove": 
+      statement = "DELETE FROM friends \
+        WHERE userid1 = (?) AND userid2=(?) OR \
+        userid1 = (?) AND userid2 = (?)"
+      db.execute(statement, (user1, user2, user2, user1)).fetchall()
+    elif action == "accept":
+      statement = "UPDATE friends SET status = 'friends' WHERE userid1 = (?) AND userid2 = (?)"
+      db.execute(statement, (user2, user1))
+    connection.commit()
+    close_db(connection, db)
 
-# Create response for updateFriend function
-  myResponse = make_response('Response')
-  myResponse.status_code = 200
+    myResponse = make_response('Successfully updated')
+    myResponse.status_code = 200
+
+  # If user2 does not exist
+  else:
+    myResponse = make_response('Error updating friend list')
+    myResponse.status_code = 400
 
   return myResponse
 

@@ -3,10 +3,6 @@
 Create an app to keep track of your boardgame collection. Also you can keep track of games played, as well as see your friends' collections!
 
 ### TODO
-- Add Friends
-    - Display friends owned games on gamepage.html
-    - Make sure user's can't mess with names in dev tools
-    - Resolve successful/failed friend update
 - Allow import of collection from BGG
     - ... Not sure yet
 - User profile picture
@@ -17,6 +13,7 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - Decorator?
     - Check for response header and display temporary holding page with timer
 - Refine Everything
+    - Display friends owned games on gamepage.html
     - Playlog overlay
     - Other styles
     - Search when no results (boardgames and users)

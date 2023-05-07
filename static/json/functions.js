@@ -26,8 +26,11 @@ function updateFriend(action, user2) {
 
     var url = `/updatefriend?action=${action}&user2=${user2}`;
 
+    console.log(url)
+
     req.open("GET", url, false)
     req.send()
 
     console.log(req.status)
+    location.reload()
 }
