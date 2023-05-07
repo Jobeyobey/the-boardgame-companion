@@ -192,9 +192,25 @@ def index():
       collection = False
 
     # Get friends
-      # 
-      # 
-      # 
+    friendList = get_friend_list(userId)
+    friendIds = []
+    for friend in friendList:
+      if friend['status'] == 'friends':
+        if friend['user1'] == userId:
+          friendIds.append(friend['user2'])
+        else:
+          friendIds.append(friend['user1'])
+
+    friends = []
+    if friendIds:
+      connection, db = open_db()
+      statement = "SELECT username FROM users WHERE id = (?)"
+      for friend in range(1, len(friendIds)):
+        statement = statement + " OR id = (?)"
+      friend_rows = db.execute(statement, friendIds).fetchall()
+      close_db(connection, db)
+      for row in friend_rows:
+        friends.append(row[0])
 
     # Calculate user stats
     user_stats = {}
@@ -228,18 +244,20 @@ def index():
       
     # Win/Loss Ratio - If no games played
     if user_stats['wins'] == 0 and user_stats['losses'] == 0:
-      user_stats['ratio'] = 0
+      user_stats['winRate'] = 0
     # elif no wins
     elif user_stats['wins'] == 0:
-      user_stats['ratio'] = 0
+      user_stats['winRate'] = 0
     # elif no losses
     elif user_stats['losses'] == 0:
-      user_stats['ratio'] = "∞"
+      user_stats['winRate'] = 100
     # Else, calculate ratio
     else:
-      user_stats['ratio'] = user_stats['wins'] / user_stats['losses']
+      user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
 
-    return render_template("index.html", own_profile=own_profile, username=username, collection=collection, user_log=user_log, relation=relation)
+    print(user_stats)
+
+    return render_template("index.html", own_profile=own_profile, username=username, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
 
 
 @app.route("/collection")
@@ -435,15 +453,11 @@ def addfriend():
   connection.commit()
   close_db(connection, db)
 
-
-    
-
 # Create response for updateFriend function
   myResponse = make_response('Response')
   myResponse.status_code = 200
 
   return myResponse
-
 
 
 if __name__ == "__main__":

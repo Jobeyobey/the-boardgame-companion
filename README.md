@@ -3,17 +3,11 @@
 Create an app to keep track of your boardgame collection. Also you can keep track of games played, as well as see your friends' collections!
 
 ### TODO
-- Index page
-    - Display stats (update styling to multi-columns)
-    - Display playlog
-    - Display collection
-    - Display friends
 - Add Friends
-    - Search users
-    - Add user
     - Display friends
-    - Accept/Decline request
     - Display friends owned games on gamepage.html
+    - Make sure user's can't mess with names in dev tools
+    - Resolve successful/failed friend update
 - Allow import of collection from BGG
     - ... Not sure yet
 - User profile picture
@@ -27,11 +21,10 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - Playlog overlay
     - Other styles
     - Search when no results (boardgames and users)
-    - Username is case-sensitive
     - Playlog should have most recent game at top
     - Search needs to have multiple pages when too many results
     - 'Loading...' when searching, to prevent user refreshing
-    - User is never auto-logged-out
+    - User is currently never auto-logged-out
 
 ## Bibliography
 
