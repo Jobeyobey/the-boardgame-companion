@@ -74,6 +74,18 @@ def get_user_id(username):
   return userId
 
 
+def get_username(id):
+  tupleId = (id,)
+  connection, db = open_db()
+  statement = "SELECT username FROM users WHERE id = (?)"
+  friend_rows = db.execute(statement, tupleId).fetchall()
+  close_db(connection, db)
+  for row in friend_rows:
+    username = row[0]
+  
+  return username
+
+
 def add_gamecache(gameId):
    # Check if game already exists in gamecache
     cache_connection, cache_db = open_db()

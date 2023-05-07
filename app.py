@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -255,8 +255,6 @@ def index():
     else:
       user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
 
-    print(user_stats)
-
     return render_template("index.html", own_profile=own_profile, username=username, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
 
 
@@ -265,7 +263,10 @@ def index():
 def collection():
   userId = get_user_id(session['username'])
   user_collection = get_user_collection(userId)
-  games = fetch_game_cache(user_collection)
+  if user_collection:
+    games = fetch_game_cache(user_collection)
+  else:
+    games = []
 
   return render_template("collection.html", games=games)
 
@@ -340,8 +341,49 @@ def playlog():
 @app.route("/friends")
 @login_required
 def friends():
-  
-  return render_template("friends.html")
+
+  userId = get_user_id(session['username'])
+
+  # Get friend list
+  friendList = get_friend_list(userId)
+
+  # Split friendlist into friends/friends requested/received
+  friends = []
+  requested = []
+  received = []
+  for relation in friendList:
+    # If friends, add relation to friendlist. Update key to 'user' for easy access later
+    if relation['status'] == 'friends' and relation['user1'] == userId:
+      relation['username'] = relation['user2']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+    elif relation['status'] == 'friends' and relation['user2'] == userId:
+      relation['username'] = relation['user1']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+    # If pending request, move to relevant request/received and update key to 'user' for easy access later.
+    else:
+      if relation['user1'] == userId:
+        relation['username'] = relation['user2']
+        del relation['user1']
+        del relation['user2']
+        requested.append(relation)
+      else:
+        relation['username'] = relation['user1']
+        del relation['user1']
+        del relation['user2']
+        received.append(relation)
+
+  for relation in friends:
+    relation['username'] = get_username(relation['username'])
+  for relation in requested:
+    relation['username'] = get_username(relation['username'])
+  for relation in received:
+    relation['username'] = get_username(relation['username'])
+
+  return render_template("friends.html", friends=friends, requested=requested, received=received)
 
 
 @app.route("/search", methods=["GET", "POST"])

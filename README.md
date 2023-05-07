@@ -4,7 +4,6 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
 
 ### TODO
 - Add Friends
-    - Display friends
     - Display friends owned games on gamepage.html
     - Make sure user's can't mess with names in dev tools
     - Resolve successful/failed friend update
@@ -25,6 +24,7 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - Search needs to have multiple pages when too many results
     - 'Loading...' when searching, to prevent user refreshing
     - User is currently never auto-logged-out
+    - 'Cancel Request' on friend page border
 
 ## Bibliography
 
@@ -45,21 +45,3 @@ https://github.com/martinblech/xmltodict
 
 ### How to use Flask.make_response()
 https://www.educative.io/answers/what-is-flaskmakeresponse
-
-
-
-
-### Friend Table Layout
-
-userid1 = requestee
-userid2 = requested
-status = status
-
-4 possible options:
-- Friends (user1, user2, friends)
-- Not Friends (not listed in table)
-- Request Sent (user1, user2, pending)
-- Request Received (user1, user2, pending)
-
-When user1 is the user logged in, they are the sender of request
-When user2 is the user logged in, they are the recipient of request
