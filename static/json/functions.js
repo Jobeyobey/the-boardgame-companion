@@ -21,16 +21,35 @@ str = str.replace(/&amp;quot;/g, '"');
 return str;
 }
 
+
+// Add/remove/accept/reject friend buttons
 function updateFriend(action, user2) {
     var req = new XMLHttpRequest();
 
     var url = `/updatefriend?action=${action}&user2=${user2}`;
 
-    console.log(url)
-
     req.open("GET", url, false)
     req.send()
 
-    console.log(req.status)
     location.reload()
+}
+
+
+// Updating user profile icons
+function updateIcon(input) {
+    button = document.getElementById("icon-submit");
+    button.setAttribute("onclick", `sendIconUpdate(${input})`);
+}
+
+function sendIconUpdate(input) {
+    var req = new XMLHttpRequest();
+
+    var url = `/updateicon?input=${input}`;
+
+    req.open("GET", url, false);
+    req.send();
+
+    if (req.status == "200") {
+        location.reload()
+    }
 }
