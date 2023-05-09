@@ -292,11 +292,29 @@ nav {
 /* Home & Game Page */
 /* Header */
 
+.pfp-selection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pfp-selection img {
+  max-width: 120px;
+  border-radius: 6px;
+}
+
 .main-img {
   max-width: 15rem;
   height: 100%;
   margin-right: 2rem;
   border-radius: 5px;
+}
+
+.main-img:hover {
+  opacity: 90%;
+  cursor: pointer;
 }
 
 .header {

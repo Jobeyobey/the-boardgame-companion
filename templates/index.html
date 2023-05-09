@@ -7,8 +7,24 @@
 {% endblock %}
 
 {% block main %}
+    <div id="overlay">
+        <div id="overlay-container" class="overlay-container">
+            <div class="pfp-selection">
+                <img src="./static/img/1-axe.png">
+                <img src="./static/img/2-book.png">
+                <img src="./static/img/3-crown.png">
+                <img src="./static/img/4-potion.png">
+                <img src="./static/img/5-ruby.png">
+                <img src="./static/img/6-scroll.png">
+                <img src="./static/img/7-shield.png">
+                <img src="./static/img/8-sword.png">
+            </div>
+            <button type="submit" class="button record add btn-strong" type="submit">Submit</button>
+            <button type="button" class="form-button record remove" onclick="overlayOff()">Close</button>
+        </div>
+    </div>
     <div class="header">
-        <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img">
+        <img src="{{ url_for('static', filename='img/spirit-island.jpg') }}" class="main-img" onclick="overlayOn()">
         <div class="header-info">
             <div class="head-name-container">
                 <h1 class="head-name">{{ username }}</h1>

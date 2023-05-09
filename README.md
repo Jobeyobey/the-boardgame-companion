@@ -3,12 +3,8 @@
 Create an app to keep track of your boardgame collection. Also you can keep track of games played, as well as see your friends' collections!
 
 ### TODO
-- Allow import of collection from BGG
-    - ... Not sure yet
 - User profile picture
-    - Find generic profile pictures
-    - Allow user to pick a picture
-    - Stretch goal: Allow a user to upload a SQUARE picture
+    - Allow user to pick one of X profile pics
 - Create something that catches API errors
     - Decorator?
     - Check for response header and display temporary holding page with timer
@@ -22,6 +18,8 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
     - 'Loading...' when searching, to prevent user refreshing
     - User is currently never auto-logged-out
     - 'Cancel Request' on friend page border
+- Allow import of collection from BGG
+    - ... Not sure yet
 
 ## Bibliography
 
