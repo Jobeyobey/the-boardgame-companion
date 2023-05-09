@@ -305,8 +305,17 @@ nav {
   border-radius: 6px;
 }
 
+.pfp-icon {
+  transition-duration: 0.3s;
+}
+
+.pfp-icon:hover {
+  opacity: 90%;
+  cursor: pointer;
+}
+
 .main-img {
-  max-width: 15rem;
+  max-width: 224px;
   height: 100%;
   margin-right: 2rem;
   border-radius: 5px;
@@ -625,6 +634,7 @@ hr {
   margin: auto;
   width: auto;
   height: auto;
+  max-width: 225px;
   border-radius: 5px 5px 0 0;
 }
 

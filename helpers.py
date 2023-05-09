@@ -89,6 +89,40 @@ def get_username(id):
   return username
 
 
+def get_user_icon(id):
+  tupleId = (id,)
+  connection, db = open_db()
+  statement = "SELECT icon FROM users WHERE username = (?)"
+  friend_rows = db.execute(statement, tupleId).fetchall()
+  close_db(connection, db)
+  for row in friend_rows:
+    icon = row[0]
+  
+  return icon
+
+
+def get_icon_path(userIcon):
+    match userIcon:
+      case "1":
+        icon_path = "img/1-axe.png"
+      case "2":
+        icon_path = "img/2-book.png"
+      case "3":
+        icon_path = "img/3-crown.png"
+      case "4":
+        icon_path = "img/4-potion.png"
+      case "5":
+        icon_path = "img/5-ruby.png"
+      case "6":
+        icon_path = "img/6-scroll.png"
+      case "7":
+        icon_path = "img/7-shield.png"
+      case "8":
+        icon_path = "img/8-sword.png"
+
+    return icon_path
+
+
 def add_gamecache(gameId):
    # Check if game already exists in gamecache
     cache_connection, cache_db = open_db()

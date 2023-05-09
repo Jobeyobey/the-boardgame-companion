@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list, get_icon_path, get_user_icon
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
 import requests
 import xmltodict
 import datetime
+import random
 
 app = Flask(__name__)
 
@@ -14,113 +15,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(12)
 app.config['SESSION_TYPE'] = "filesystem"
 Session(app)
-
-@app.route("/signout")
-def signout():
-  session.clear()
-  return redirect("/login")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-
-  # POST here is used for logging in
-  if request.method == "POST":
-
-    # Connect to sqlite database
-    connection, db = open_db()
-
-    # Prepare insert statement and data
-    username = request.form.get("username")
-    password = request.form.get("password")
-    insert_statement = (
-      "SELECT username, hash FROM users WHERE username = ? COLLATE NOCASE"
-    )
-
-    # Insert data
-    user = db.execute(insert_statement, (username,)).fetchall()
-
-    # Check user exists
-    if user == []:
-      flash("Username or password incorrect")
-      return redirect(url_for("login"))
-    
-    # Check password is correct
-    if not check_password_hash(user[0]['hash'], password):
-      flash("Username or password incorrect")
-      return redirect(url_for("login"))
-
-    # Close database cursor and connection
-    close_db(connection, db)
-
-    session['username'] = user[0]['username']
-    flash("Logged in")
-
-    return redirect("/")
-
-  # GET
-  if request.method == "GET":
-
-    # If user is logged in, go to index
-    if session.get('username') is not None:
-      return redirect(url_for("index"))
-    
-    return render_template("login.html")
-  
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-
-  # POST here is used for registering a new user
-  if request.method == "POST":
-
-    # Connect to sqlite database
-    connection, db = open_db()
-
-    # Retrieve user/password from registration form
-    username = request.form.get("username")
-    password = request.form.get("password")
-
-    # Check username and password are valid
-    if validate_username(username):
-      flash("Username must be 3-20 characters. Alphanumeric and spaces only. Must not start or end with a space.")
-      return redirect(url_for("register"))
-    
-    if validate_password(password, request.form.get("confirm")):
-      flash("Password must be 8-50 characters. Cannot contain * : ' \"")
-      return redirect(url_for("register"))
-
-    # Check if username is taken
-    select_statement = (
-      "SELECT username FROM users WHERE username = (?)"
-    )
-    user_check = db.execute(select_statement, (username,)).fetchall()
-    if user_check:
-      db.close()
-      connection.close()
-      flash("Username taken")
-      return redirect(url_for("register"))
-    
-    # Generate hash and data to insert into db
-    hash = generate_password_hash(password)
-    data = (username, hash)
-
-    # Insert user into database
-    insert_statement = (
-      "INSERT INTO users (username, hash) VALUES (?, ?)"
-    )
-    db.execute(insert_statement, data)
-
-    # Commit to and close database
-    connection.commit()
-    close_db(connection, db)
-
-    session['username'] = username
-
-    return redirect("/login")
-  
-  # GET
-  return render_template("register.html")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -138,9 +32,9 @@ def index():
       username = session['username']
       own_profile = True
 
-    # Get id and username
+    # Get id, username and icon
     connection, db = open_db()
-    statement = "SELECT id, username FROM users WHERE username = (?)"
+    statement = "SELECT id, username, icon FROM users WHERE username = (?)"
     user_rows = db.execute(statement, (username,)).fetchall()
     close_db(connection, db)
 
@@ -151,6 +45,10 @@ def index():
     
     for row in user_rows:
       userId = row[0]
+      userIcon = row[2]
+
+    # Set icon path
+    icon_path = get_icon_path(userIcon)
 
     # Check friend status if viewing someone's profile
     relation = False
@@ -256,7 +154,118 @@ def index():
     else:
       user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
 
-    return render_template("index.html", own_profile=own_profile, username=username, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
+    return render_template("index.html", own_profile=own_profile, username=username, iconpath=icon_path, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
+
+
+@app.route("/signout")
+def signout():
+  session.clear()
+  return redirect("/login")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+  # POST here is used for logging in
+  if request.method == "POST":
+
+    # Connect to sqlite database
+    connection, db = open_db()
+
+    # Prepare insert statement and data
+    username = request.form.get("username")
+    password = request.form.get("password")
+    insert_statement = (
+      "SELECT username, hash FROM users WHERE username = ? COLLATE NOCASE"
+    )
+
+    # Insert data
+    user = db.execute(insert_statement, (username,)).fetchall()
+
+    # Check user exists
+    if user == []:
+      flash("Username or password incorrect")
+      return redirect(url_for("login"))
+    
+    # Check password is correct
+    if not check_password_hash(user[0]['hash'], password):
+      flash("Username or password incorrect")
+      return redirect(url_for("login"))
+
+    # Close database cursor and connection
+    close_db(connection, db)
+
+    session['username'] = user[0]['username']
+    flash("Logged in")
+
+    return redirect("/")
+
+  # GET
+  if request.method == "GET":
+
+    # If user is logged in, go to index
+    if session.get('username') is not None:
+      return redirect(url_for("index"))
+    
+    return render_template("login.html")
+  
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+  # POST here is used for registering a new user
+  if request.method == "POST":
+
+    # Connect to sqlite database
+    connection, db = open_db()
+
+    # Retrieve user/password from registration form
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    # Check username and password are valid
+    if validate_username(username):
+      flash("Username must be 3-20 characters. Alphanumeric and spaces only. Must not start or end with a space.")
+      return redirect(url_for("register"))
+    
+    if validate_password(password, request.form.get("confirm")):
+      flash("Password must be 8-50 characters. Cannot contain * : ' \"")
+      return redirect(url_for("register"))
+
+    # Check if username is taken
+    select_statement = (
+      "SELECT username FROM users WHERE username = (?)"
+    )
+    user_check = db.execute(select_statement, (username,)).fetchall()
+    if user_check:
+      db.close()
+      connection.close()
+      flash("Username taken")
+      return redirect(url_for("register"))
+    
+    # Pick a random profile icon
+    icon = random.randrange(1, 9)
+    
+    # Generate hash and data to insert into db
+    hash = generate_password_hash(password)
+    data = (username, hash, icon)
+
+    # Insert user into database
+    insert_statement = (
+      "INSERT INTO users (username, hash, icon) VALUES (?, ?, ?)"
+    )
+    db.execute(insert_statement, data)
+
+    # Commit to and close database
+    connection.commit()
+    close_db(connection, db)
+
+    session['username'] = username
+
+    return redirect("/login")
+  
+  # GET
+  return render_template("register.html")
 
 
 @app.route("/collection")
@@ -379,10 +388,16 @@ def friends():
 
   for relation in friends:
     relation['username'] = get_username(relation['username'])
+    icon = get_user_icon(relation['username'])
+    relation['iconPath'] = get_icon_path(icon)
   for relation in requested:
     relation['username'] = get_username(relation['username'])
+    icon = get_user_icon(relation['username'])
+    relation['iconPath'] = get_icon_path(icon)
   for relation in received:
     relation['username'] = get_username(relation['username'])
+    icon = get_user_icon(relation['username'])
+    relation['iconPath'] = get_icon_path(icon)
 
   return render_template("friends.html", friends=friends, requested=requested, received=received)
 
@@ -508,6 +523,30 @@ def updatefriend():
 
   return myResponse
 
+
+@app.route("/updateicon", methods=["GET"])
+@login_required
+def updateicon():
+  availableIcons = ["1", "2", "3", "4", "5", "6", "7", "8"]
+  input = request.args["input"]
+
+  # Check form hasn't been tampered with
+  if input not in availableIcons:
+    myResponse = make_response('Icon does not exist')
+    myResponse.status_code = 400
+    return myResponse
+
+  # Update user profile icon
+  connection, db = open_db()
+  statement = "UPDATE users SET icon = (?) WHERE username = (?)"
+  db.execute(statement, (input, session['username']))
+  connection.commit()
+  close_db(connection, db)
+
+  myResponse = make_response('User icon updated')
+  myResponse.status_code = 200
+
+  return myResponse
 
 if __name__ == "__main__":
   app.run()
