@@ -103,13 +103,17 @@ def index():
     friends = []
     if friendIds:
       connection, db = open_db()
-      statement = "SELECT username FROM users WHERE id = (?)"
+      statement = "SELECT username, icon FROM users WHERE id = (?)"
       for friend in range(1, len(friendIds)):
         statement = statement + " OR id = (?)"
       friend_rows = db.execute(statement, friendIds).fetchall()
       close_db(connection, db)
       for row in friend_rows:
-        friends.append(row[0])
+        icon = get_icon_path(row[1])
+        friends.append({
+          "username": row[0],
+          "icon": icon
+          })
 
     # Calculate user stats
     user_stats = {}

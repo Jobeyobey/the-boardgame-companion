@@ -6,6 +6,7 @@
     <h1>Results</h1>
     <hr class="alt-hr">
     <div id="page-content-container">
+        <p id="status-line">Loading...</p>
     </div>
     <script>
         // Input query from user into API
@@ -24,6 +25,16 @@
         // Get results and number of results to loop through
         num_results = xmlDoc.getElementsByTagName("item").length;
         results = xmlDoc.getElementsByTagName("item");
+
+        // Return feedback if no results, or remove "loading" if there are results
+        if (num_results == 0) {
+            console.log("Hello 0")
+            tempDiv = document.getElementById("status-line");
+            tempDiv.innerHTML = `No results found for "{{ query }}"`;
+        } else {
+            tempDiv = document.getElementById("status-line");
+            tempDiv.remove();
+        }
 
         // Prepare ID string to insert into next API search
         var gameApis = [];
