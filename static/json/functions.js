@@ -53,3 +53,19 @@ function sendIconUpdate(input) {
         location.reload()
     }
 }
+
+
+// Boardgame search next/prev page
+
+function changePage(action, query, page) {
+    searchType = "boardgames";
+    if (action == "next") {
+        var pageNo = page + 1;
+    } else {
+        var pageNo = page - 1;
+        if (pageNo < 1) {
+            pageNo = 1;
+        };
+    }
+    window.location.replace(`/search?query=${query}&search-type=boardgames&page=${pageNo}`)
+}

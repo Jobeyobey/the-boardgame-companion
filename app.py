@@ -406,18 +406,21 @@ def friends():
   return render_template("friends.html", friends=friends, requested=requested, received=received)
 
 
-@app.route("/search", methods=["GET", "POST"])
+@app.route("/search", methods=["GET"])
 @login_required
 def search():
-  #POST
-  if request.method == "POST":
-    # Get user query and search type
-    query = request.form.get("query")
-    type = request.form.get("search-type")
+    
+  #GET
+  if request.method == "GET":
+    query = request.args["query"]
+    type = request.args["search-type"]
+    page = request.args["page"]
+    if int(page) < 1:
+      page = 1
 
     # Make requested search - Boardgames or Users
     if type == "boardgames":
-      return render_template("search.html", query=query)
+      return render_template("search.html", query=query, page=page)
     else:
       # User Search - Check database for users matching query
       connection, db = open_db()
@@ -432,9 +435,6 @@ def search():
             "user": user[0]
           })
       return render_template("searchusers.html", users=users)
-    
-  #GET
-  return redirect("/")
   
   
 @app.route("/gamepage", methods=["GET", "POST"])

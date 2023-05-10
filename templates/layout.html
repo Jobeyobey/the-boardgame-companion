@@ -43,13 +43,14 @@
               <a class="navlink" href="/friends">Friends</a>
           </div>
           <!-- Search input -->
-          <form class="nav-search" action="/search" method="post">
+          <form class="nav-search" action="/search" method="get">
               <input type="text" name="query" placeholder="Search..." autocomplete="off">
               <select name="search-type" id="search-type">
                 <option value="boardgames">Boardgames</option>
                 <option value="users">Users</option>
               </select>
               <button type="submit">Search</button>
+              <input type="hidden" name="page" value="1">
           </form>
             <a class="navlink signout" href="/signout">Sign Out</a>
         </div>
@@ -59,13 +60,14 @@
             <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
           </a>
           <!-- Search input -->
-          <form class="nav-search" action="/search" method="post">
+          <form class="nav-search" action="/search" method="get">
               <input type="text" name="query" placeholder="Search..." autocomplete="off">
               <select name="search-type" id="search-type">
                 <option value="boardgames">Boardgames</option>
                 <option value="users">Users</option>
               </select>
               <button type="submit">Search</button>
+              <input type="hidden" name="page" value="1">
           </form>
           <div class="dropdown">
             <button onclick="dropdownClick()" class="dropbtn">

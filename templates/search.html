@@ -2,8 +2,12 @@
 
 {% block title %}Index{% endblock %}
 
+{% block scripts %}
+    <script type="text/javascript" src="./static/json/functions.js"></script>
+{% endblock %}
+
 {% block main %}
-    <h1>Results</h1>
+    <h1 id="title">Results</h1>
     <hr class="alt-hr">
     <div id="page-content-container">
         <p id="status-line">Loading...</p>
@@ -25,10 +29,12 @@
         // Get results and number of results to loop through
         num_results = xmlDoc.getElementsByTagName("item").length;
         results = xmlDoc.getElementsByTagName("item");
+        
+        console.log(num_results)
+        console.log(results)
 
         // Return feedback if no results, or remove "loading" if there are results
         if (num_results == 0) {
-            console.log("Hello 0")
             tempDiv = document.getElementById("status-line");
             tempDiv.innerHTML = `No results found for "{{ query }}"`;
         } else {
@@ -42,13 +48,17 @@
             gameApis.push(`https://boardgamegeek.com/xmlapi2/thing?id=${results[i].getAttribute("id")}&stats=1`);
         }
 
+        var results_per_page = 7
         var game_results = []
+
+        // Calculate where to iterating through results according to page number
+        startList = ({{ page }} * results_per_page) - results_per_page
 
         // Wrap in setTimeout(10) to give initial API request a moment to return before continuing
         setTimeout(function(){
             // Loop through IDs in gameApis. Make an API request for each one, for more detailed info on each game
             // Too many requests in too short a time will cause BGG to begin rejecting requests. I should create pages for every 10 results. Error code 429 = too many requests
-            for (let i = 0; (i < gameApis.length) && (game_results.length < 10); i++) {
+            for (let i = startList; (i < gameApis.length) && (game_results.length < results_per_page); i++) {
                 var newReq = new XMLHttpRequest();
                 newReq.open("GET", `${gameApis[i]}`, false)
                 newReq.send(null)
@@ -68,6 +78,11 @@
                 // Push parsed XML to game_results array
                 game_results.push(newXmlDoc);
             };
+
+            // If gone past final result using 'next' button and no games remaining, redirect to previous page
+            if (game_results.length == 0) {
+                changePage("prev", "{{ query }}", "{{ page }}")
+            }
         
             // Select prepared search-results div
             search_results = document.getElementById("page-content-container");
@@ -111,7 +126,6 @@
                 tempTitle2.classList.add("title", "tb")
                 tempTitle2.innerHTML = "Rating";
                 tempDiv.appendChild(tempTitle2);
-                console.log(game)
 
                 var tempInfo2 = document.createElement("p");
                 tempInfo2.classList.add("info", "ib")
@@ -164,6 +178,24 @@
                 // Append final div to search_results div
                 gameLink.appendChild(tempDiv);
                 search_results.appendChild(gameLink);
+            }
+        
+            // If there are more than 5 results, render "Next/Prev" page buttons
+            if (num_results > 5) {
+                // var navForm = document.createElement("form")
+                // navForm.setAttribute("method", "get")
+                // navForm.setAttribute("id", "nav-form")
+                // document.getElementById("page-content-container").appendChild(navForm)
+
+                var prevButton = document.createElement("button");
+                prevButton.innerHTML = "Prev Page";
+                prevButton.setAttribute("onclick", "changePage('prev', '{{ query }}', {{ page }})");
+                document.getElementById("page-content-container").appendChild(prevButton);
+    
+                var nextButton = document.createElement("button");
+                nextButton.innerHTML = "Next Page";
+                nextButton.setAttribute("onclick", "changePage('next', '{{ query }}', {{ page }})");
+                document.getElementById("page-content-container").appendChild(nextButton);
             }
         }, 10)
     </script>
