@@ -29,9 +29,6 @@
         // Get results and number of results to loop through
         num_results = xmlDoc.getElementsByTagName("item").length;
         results = xmlDoc.getElementsByTagName("item");
-        
-        console.log(num_results)
-        console.log(results)
 
         // Return feedback if no results, or remove "loading" if there are results
         if (num_results == 0) {
@@ -59,24 +56,32 @@
             // Loop through IDs in gameApis. Make an API request for each one, for more detailed info on each game
             // Too many requests in too short a time will cause BGG to begin rejecting requests. I should create pages for every 10 results. Error code 429 = too many requests
             for (let i = startList; (i < gameApis.length) && (game_results.length < results_per_page); i++) {
-                var newReq = new XMLHttpRequest();
-                newReq.open("GET", `${gameApis[i]}`, false)
-                newReq.send(null)
-
-                var newParser, newXmlDoc;
-                var newText = newReq.responseText;
-
-                newParser = new DOMParser();
-
-                newXmlDoc = newParser.parseFromString(newText, "text/xml");
-
-                // Check result is a base boardgame
-                if (newXmlDoc.getElementsByTagName("item")[0].getAttribute("type") != "boardgame") {
-                    continue;
+                try {
+                    var newReq = new XMLHttpRequest();
+                    newReq.open("GET", `${gameApis[i]}`, false)
+                    newReq.send(null)
+    
+                    console.log(newReq.status)
+                    console.log(newReq)
+    
+                    var newParser, newXmlDoc;
+                    var newText = newReq.responseText;
+    
+                    newParser = new DOMParser();
+    
+                    newXmlDoc = newParser.parseFromString(newText, "text/xml");
+    
+                    // Check result is a base boardgame
+                    if (newXmlDoc.getElementsByTagName("item")[0].getAttribute("type") != "boardgame") {
+                        continue;
+                    }
+                    
+                    // Push parsed XML to game_results array
+                    game_results.push(newXmlDoc);
                 }
-                
-                // Push parsed XML to game_results array
-                game_results.push(newXmlDoc);
+                catch(error) {
+                    break;
+                }
             };
 
             // If gone past final result using 'next' button and no games remaining, redirect to previous page
