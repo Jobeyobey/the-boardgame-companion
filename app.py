@@ -103,13 +103,17 @@ def index():
     friends = []
     if friendIds:
       connection, db = open_db()
-      statement = "SELECT username FROM users WHERE id = (?)"
+      statement = "SELECT username, icon FROM users WHERE id = (?)"
       for friend in range(1, len(friendIds)):
         statement = statement + " OR id = (?)"
       friend_rows = db.execute(statement, friendIds).fetchall()
       close_db(connection, db)
       for row in friend_rows:
-        friends.append(row[0])
+        icon = get_icon_path(row[1])
+        friends.append({
+          "username": row[0],
+          "icon": icon
+          })
 
     # Calculate user stats
     user_stats = {}
@@ -402,18 +406,21 @@ def friends():
   return render_template("friends.html", friends=friends, requested=requested, received=received)
 
 
-@app.route("/search", methods=["GET", "POST"])
+@app.route("/search", methods=["GET"])
 @login_required
 def search():
-  #POST
-  if request.method == "POST":
-    # Get user query and search type
-    query = request.form.get("query")
-    type = request.form.get("search-type")
+    
+  #GET
+  if request.method == "GET":
+    query = request.args["query"]
+    type = request.args["search-type"]
+    page = request.args["page"]
+    if int(page) < 1:
+      page = 1
 
     # Make requested search - Boardgames or Users
     if type == "boardgames":
-      return render_template("search.html", query=query)
+      return render_template("search.html", query=query, page=page)
     else:
       # User Search - Check database for users matching query
       connection, db = open_db()
@@ -428,9 +435,6 @@ def search():
             "user": user[0]
           })
       return render_template("searchusers.html", users=users)
-    
-  #GET
-  return redirect("/")
   
   
 @app.route("/gamepage", methods=["GET", "POST"])
@@ -581,6 +585,15 @@ def updateicon():
   myResponse.status_code = 200
 
   return myResponse
+
+
+@app.route("/catchapi")
+@login_required
+def catchApi():
+  query = request.args["query"]
+  page = request.args["page"]
+
+  return render_template("catchapi.html", query=query, page=page)
 
 if __name__ == "__main__":
   app.run()
