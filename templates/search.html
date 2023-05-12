@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}BGC Search{% endblock %}
 
 {% block scripts %}
     <script type="text/javascript" src="./static/json/functions.js"></script>
@@ -80,6 +80,7 @@
                     game_results.push(newXmlDoc);
                 }
                 catch(error) {
+                    window.location.replace(`/catchapi?query={{ query }}&page={{ page }}`)
                     break;
                 }
             };

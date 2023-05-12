@@ -552,5 +552,14 @@ def updateicon():
 
   return myResponse
 
+
+@app.route("/catchapi")
+@login_required
+def catchApi():
+  query = request.args["query"]
+  page = request.args["page"]
+
+  return render_template("catchapi.html", query=query, page=page)
+
 if __name__ == "__main__":
   app.run()
