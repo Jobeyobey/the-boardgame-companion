@@ -65,6 +65,16 @@
     <hr>
     <div>
         <h2 class="feature-title">Friends who own this game</h2>
+            <div class="tiles">
+                {% for friend in friends %}
+                <a href="/?username={{ friend['username'] }}">
+                    <div class="tile-container">
+                        <img class="tile-image" src="{{ url_for('static', filename=friend['iconPath']) }}">
+                        <h5 class="tile-title">{{ friend['username'] }}</h5>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
     </div>
     <script>
         // Parse XMLDoc
@@ -77,9 +87,14 @@
         boardGame = xmlDoc.getElementById({{gameId}});
 
         // Game Image
-        var image = boardGame.getElementsByTagName("image")[0].innerHTML;
-        var imageElement = document.getElementById("game-img");
-        imageElement.setAttribute("src", image);
+        try {
+            var image = boardGame.getElementsByTagName("image")[0].innerHTML;
+            var imageElement = document.getElementById("game-img");
+            imageElement.setAttribute("src", image);
+        } catch(error) {
+            var imageElement = document.getElementById("game-img");
+            imageElement.setAttribute("src", "https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg")
+        }
 
         // Game Name
         var name = boardGame.getElementsByTagName("name")[0]

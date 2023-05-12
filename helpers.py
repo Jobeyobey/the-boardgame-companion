@@ -226,6 +226,12 @@ def create_user_log(playlog):
       "time": row[3],
       "note": row[4]
     })
+
+  # Sort by id, descending
+  def descendingId(item):
+    return item['id']
+  user_log.sort(reverse=True, key=descendingId)
+
   return user_log
 
 

@@ -181,9 +181,36 @@
                 tempCaret.classList.add("caret", "right");
                 tempDiv.appendChild(tempCaret);
 
-                // Append final div to search_results div
+                // Append final div to search_results div and remove 'loading'
                 gameLink.appendChild(tempDiv);
                 search_results.appendChild(gameLink);
+                document.getElementById("loading").remove()
+
+                // If no results, inform user and remove 'loading'
+                if (game_results.length == 0) {
+                    newElement = document.createElement("p");
+                    newElement.innerHTML = "No matching boardgames found.";
+                    document.getElementById("page-content-container").appendChild(newElement)
+                    document.getElementById("loading").remove()
+                }
+            }
+        
+            // If there are more than 5 results, render "Next/Prev" page buttons
+            if (num_results > 5) {
+                // var navForm = document.createElement("form")
+                // navForm.setAttribute("method", "get")
+                // navForm.setAttribute("id", "nav-form")
+                // document.getElementById("page-content-container").appendChild(navForm)
+
+                var prevButton = document.createElement("button");
+                prevButton.innerHTML = "Prev Page";
+                prevButton.setAttribute("onclick", "changePage('prev', '{{ query }}', {{ page }})");
+                document.getElementById("page-content-container").appendChild(prevButton);
+    
+                var nextButton = document.createElement("button");
+                nextButton.innerHTML = "Next Page";
+                nextButton.setAttribute("onclick", "changePage('next', '{{ query }}', {{ page }})");
+                document.getElementById("page-content-container").appendChild(nextButton);
             }
         
             // If there are more than 5 results, render "Next/Prev" page buttons
