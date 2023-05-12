@@ -6,13 +6,17 @@ function overlayOff() {
     document.getElementById("overlay").style.display = "none";
 }
 
+
+// Playlog overlay
 function playOverlayOn(tile) {
     overlayOn();
     document.getElementById("overlay-title").innerHTML = tile.name
     document.getElementById("overlay-date").innerHTML = tile.time
     document.getElementById("overlay-result").innerHTML = tile.result
     document.getElementById("overlay-note").innerHTML = tile.note
+    document.getElementById("tile-id").setAttribute("value", tile.id)
 }
+
 
 // Function to convert HTML unicode characters
 function HTMLconvert(str) {
@@ -56,7 +60,6 @@ function sendIconUpdate(input) {
 
 
 // Boardgame search next/prev page
-
 function changePage(action, query, page) {
     searchType = "boardgames";
     if (action == "next") {

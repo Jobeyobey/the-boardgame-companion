@@ -4,9 +4,8 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
 
 ### TODO
 - Refine Everything
-    - Index empty playlog shows '[]'
-    - Should be able to edit/delete playlog entries
     - User is currently never auto-logged-out
+    - Index page when no friends/collection/playlog
     - Styling
         - Index page tiles
         - 'Cancel Request' on friend page border

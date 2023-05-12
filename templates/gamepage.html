@@ -23,6 +23,7 @@
                     <option value="Loss">Loss</option>
                 </select>
                 <textarea form="record" name="notes" id="notes" class="textarea" maxlength="280" placeholder="Up to 280 characters"></textarea>
+                <input type="hidden" id="record-action" name="add" value="{{ gameId }}">
                 <input type="hidden" id="record-id" name="id" value="{{ gameId }}">
                 <input type="hidden" id="record-name" name="name" value="">
                 <button type="submit" class="button record add btn-strong" type="submit">Submit</button>

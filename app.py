@@ -125,7 +125,7 @@ def index():
     if playlog:
       user_stats['gamesPlayed'] = len(user_log)
     else:
-      user_stats['gamesPlayed'] = []
+      user_stats['gamesPlayed'] = 0
 
     # Unique Game Plays, wins and losses
     user_stats['wins'] = 0
@@ -291,52 +291,72 @@ def playlog():
 
   # /playlog post is used when adding a new entry via /gamepage
   if request.method == "POST":
-    # Get info from form
-    gameName = request.form.get("name")
-    gameId = request.form.get("id")
-    result = request.form.get("result")
-    notes = request.form.get("notes")
-    if notes == "":
-      notes = "N/A"
-    d = datetime.datetime.now()
-    date = f"{d.strftime('%d')}/{d.strftime('%m')}/{d.strftime('%Y')}"
 
-    # Check name and id match on BGG
-    url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
-    response = requests.get(url)
-    parsed = xmltodict.parse(response.content)
-    try:
-      responseName = parsed['items']['item']['name'][0]['@value']
-    except KeyError:
-      responseName = parsed['items']['item']['name']['@value']
-      pass
-    responseId = parsed['items']['item']['@id']
-    # If they don't match, return them to home page
-    if gameName != responseName or gameId != responseId:
-      flash("Error updating playlog (gameid and name do not match)")
-      return redirect(url_for("index"))
-    # Check result is correct
-    if result != "Win" and result != "Loss":
-        flash(f"Error updating playlog (Problem recording match result \"{result}\")")
+    action = request.form.get("action")
+
+    # Executing 'delete' action
+    if action == "delete":
+      userId = get_user_id(session['username'])
+      logId = request.form.get("id")
+      connection, db = open_db()
+      statement = "DELETE FROM playlog WHERE id = (?) AND userid = (?)"
+      db.execute(statement, (logId, userId))
+      connection.commit()
+      close_db(connection, db)
+      
+      return redirect("/playlog")
+    
+    # Executing 'add' action
+    else:
+      # Get info from form
+      gameName = request.form.get("name")
+      gameId = request.form.get("id")
+      result = request.form.get("result")
+      notes = request.form.get("notes")
+      if notes == "":
+        notes = "N/A"
+      d = datetime.datetime.now()
+      date = f"{d.strftime('%d')}/{d.strftime('%m')}/{d.strftime('%Y')}"
+
+      # Check name and id match on BGG
+      url = "https://boardgamegeek.com/xmlapi2/thing?id=" + str(gameId)
+      response = requests.get(url)
+      parsed = xmltodict.parse(response.content)
+      try:
+        responseName = parsed['items']['item']['name'][0]['@value']
+      except KeyError:
+        responseName = parsed['items']['item']['name']['@value']
+        pass
+      responseId = parsed['items']['item']['@id']
+      # If they don't match, return them to home page
+      if gameName != responseName or gameId != responseId:
+        flash("Error updating playlog (gameid and name do not match)")
         return redirect(url_for("index"))
-    # Check notes are under 280 characters
-    if len(notes) > 280:
-      flash("Error updating playlog (too many characters in notes)")
-      return redirect(url_for("index"))
-    
-    userId = get_user_id(session['username'])
+      # Check result is correct
+      if result != "Win" and result != "Loss":
+          flash(f"Error updating playlog (Problem recording match result \"{result}\")")
+          return redirect(url_for("index"))
+      # Check notes are under 280 characters
+      if len(notes) > 280:
+        flash("Error updating playlog (too many characters in notes)")
+        return redirect(url_for("index"))
+      
+      userId = get_user_id(session['username'])
 
-    # Create data object to insert into database
-    data = (userId, gameId, result, date, notes)
+      # Create data object to insert into database
+      data = (userId, gameId, result, date, notes)
 
-    # Commit data to database
-    connection, db = open_db()
-    statement = "INSERT INTO playlog (userid, gameid, result, time, note) VALUES (?, ?, ?, ?, ?)"
-    db.execute(statement, data)
-    connection.commit()
-    close_db(connection, db)
+      # Commit data to database
+      connection, db = open_db()
+      statement = "INSERT INTO playlog (userid, gameid, result, time, note) VALUES (?, ?, ?, ?, ?)"
+      db.execute(statement, data)
+      connection.commit()
+      close_db(connection, db)
+      
+      # Add game to gamecache (if not already there)
+      add_gamecache(gameId)
     
-    return redirect("/playlog")
+      return redirect(f"/gamepage?id={gameId}")
 
   # Displaying playlog page
   if request.method == "GET":

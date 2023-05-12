@@ -17,7 +17,11 @@
                 <p id="overlay-result">Win</p>
                 <h3>Game Notes</h3>
                 <p id="overlay-note">None</p>
-                <button type="button" onclick="overlayOff()" class="button record add btn-strong">Done</button>
+                <button type="button" onclick="overlayOff()" class="button record add btn-strong">Close</button>
+                <form action="/playlog" method="post">
+                    <button type="submit" name="action" value="delete" class="form-button record remove btn-strong">Delete</button>
+                    <input type="hidden" id="tile-id" name="id">
+                </form>
             </form>
         </div>
     </div>
