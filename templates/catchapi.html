@@ -4,8 +4,29 @@
 
 {% block scripts %}
     <script>
+        // Function for 'continue search' button
         function continueSearch(url) {
             window.location.replace(url)
+        }
+
+        // Prepares a 20 second countdown timer to enable 'continue search' button
+        function searchCountdown(duration) {
+                var timeLeft = duration;
+            var interval = setInterval(function() {
+                display = document.getElementById("display");
+                timeLeft -= 1;
+
+                display.innerHTML = `Try again in ${timeLeft} seconds`;
+                if (timeLeft <= 0) {
+                    display.remove()
+                    document.getElementById("search-btn").removeAttribute("disabled")
+                    clearInterval(interval);
+                }
+            }, 1000)
+        }
+        // Run countdown on window load
+        window.onload = function() {
+            searchCountdown(20)
         }
     </script>
 {% endblock %}
@@ -16,7 +37,8 @@
     <div id="page-content-container">
         <h2>Why am I seeing this error?</h2>
         <p>Unfortunately, you can only make a limited number of requests to the BoardGameGeek API in a short time. The search function uses a lot of requests at a time and can quickly hit this limit. Please wait 20 seconds, then click the "Try Again" button below to continue your search.</p>
-        <button type="button" onclick="continueSearch('/search?query={{ query }}&search-type=boardgames&page={{page}}')">Try Again</button>
         <br/>
+        <p id="display">Try again in 20 seconds</p>
+        <button disabled id="search-btn" type="button" onclick="continueSearch('/search?query={{ query }}&search-type=boardgames&page={{ page }}')">Continue Search</button>
     </div>
 {% endblock %}
