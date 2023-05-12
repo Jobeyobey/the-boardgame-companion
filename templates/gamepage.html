@@ -87,9 +87,14 @@
         boardGame = xmlDoc.getElementById({{gameId}});
 
         // Game Image
-        var image = boardGame.getElementsByTagName("image")[0].innerHTML;
-        var imageElement = document.getElementById("game-img");
-        imageElement.setAttribute("src", image);
+        try {
+            var image = boardGame.getElementsByTagName("image")[0].innerHTML;
+            var imageElement = document.getElementById("game-img");
+            imageElement.setAttribute("src", image);
+        } catch(error) {
+            var imageElement = document.getElementById("game-img");
+            imageElement.setAttribute("src", "https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg")
+        }
 
         // Game Name
         var name = boardGame.getElementsByTagName("name")[0]
