@@ -9,12 +9,12 @@
         {% if users %}
             <div class="tiles">
                 {% for user in users %}
-                <a href="/?username={{ user['user'] }}">
-                    <div class="tile-container">
-                        <img class="tile-image" src="{{ url_for('static', filename='img/spirit-island.jpg') }}">
-                        <h5 class="tile-title">{{ user['user'] }}</h5>
-                    </div>
-                </a>
+                    <a href="/?username={{ user['user'] }}">
+                        <div class="tile-container">
+                            <img class="tile-image" src="{{ url_for('static', filename=user['iconPath']) }}">
+                            <h5 class="tile-title">{{ user['user'] }}</h5>
+                        </div>
+                    </a>
                 {% endfor %}
             </div>
         {% else %}

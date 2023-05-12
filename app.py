@@ -424,7 +424,7 @@ def search():
     else:
       # User Search - Check database for users matching query
       connection, db = open_db()
-      statement = "SELECT username FROM users WHERE username LIKE (?)"
+      statement = "SELECT username, icon FROM users WHERE username LIKE (?)"
       query = "%" + query + "%"
       user_rows = db.execute(statement, (query,)).fetchall()
       close_db(connection, db)
@@ -432,8 +432,10 @@ def search():
       for user in user_rows:
         if user[0] != session['username']:
           users.append({
-            "user": user[0]
+            "user": user[0],
+            "iconPath": get_icon_path(user[1])
           })
+      print(users)
       return render_template("searchusers.html", users=users)
   
   

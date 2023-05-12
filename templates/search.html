@@ -61,9 +61,6 @@
                     newReq.open("GET", `${gameApis[i]}`, false)
                     newReq.send(null)
     
-                    console.log(newReq.status)
-                    console.log(newReq)
-    
                     var newParser, newXmlDoc;
                     var newText = newReq.responseText;
     
@@ -86,7 +83,7 @@
             };
 
             // If gone past final result using 'next' button and no games remaining, redirect to previous page
-            if (game_results.length == 0) {
+            if (game_results.length == 0 && {{ page }} != 1) {
                 changePage("prev", "{{ query }}", "{{ page }}")
             }
         
@@ -184,7 +181,6 @@
                 // Append final div to search_results div and remove 'loading'
                 gameLink.appendChild(tempDiv);
                 search_results.appendChild(gameLink);
-                document.getElementById("loading").remove()
 
                 // If no results, inform user and remove 'loading'
                 if (game_results.length == 0) {
@@ -197,28 +193,6 @@
         
             // If there are more than 5 results, render "Next/Prev" page buttons
             if (num_results > 5) {
-                // var navForm = document.createElement("form")
-                // navForm.setAttribute("method", "get")
-                // navForm.setAttribute("id", "nav-form")
-                // document.getElementById("page-content-container").appendChild(navForm)
-
-                var prevButton = document.createElement("button");
-                prevButton.innerHTML = "Prev Page";
-                prevButton.setAttribute("onclick", "changePage('prev', '{{ query }}', {{ page }})");
-                document.getElementById("page-content-container").appendChild(prevButton);
-    
-                var nextButton = document.createElement("button");
-                nextButton.innerHTML = "Next Page";
-                nextButton.setAttribute("onclick", "changePage('next', '{{ query }}', {{ page }})");
-                document.getElementById("page-content-container").appendChild(nextButton);
-            }
-        
-            // If there are more than 5 results, render "Next/Prev" page buttons
-            if (num_results > 5) {
-                // var navForm = document.createElement("form")
-                // navForm.setAttribute("method", "get")
-                // navForm.setAttribute("id", "nav-form")
-                // document.getElementById("page-content-container").appendChild(navForm)
 
                 var prevButton = document.createElement("button");
                 prevButton.innerHTML = "Prev Page";
