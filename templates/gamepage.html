@@ -65,6 +65,16 @@
     <hr>
     <div>
         <h2 class="feature-title">Friends who own this game</h2>
+            <div class="tiles">
+                {% for friend in friends %}
+                <a href="/?username={{ friend['username'] }}">
+                    <div class="tile-container">
+                        <img class="tile-image" src="{{ url_for('static', filename=friend['iconPath']) }}">
+                        <h5 class="tile-title">{{ friend['username'] }}</h5>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
     </div>
     <script>
         // Parse XMLDoc

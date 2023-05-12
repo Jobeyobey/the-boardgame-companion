@@ -362,7 +362,7 @@ def friends():
   requested = []
   received = []
   for relation in friendList:
-    # If friends, add relation to friendlist. Update key to 'user' for easy access later
+    # If 'friends', add relation's username and icon to friendlist. Delete unncessary keys.
     if relation['status'] == 'friends' and relation['user1'] == userId:
       relation['username'] = relation['user2']
       del relation['user1']
@@ -373,7 +373,7 @@ def friends():
       del relation['user1']
       del relation['user2']
       friends.append(relation)
-    # If pending request, move to relevant request/received and update key to 'user' for easy access later.
+    # If 'pending' request, move to relevant request/received
     else:
       if relation['user1'] == userId:
         relation['username'] = relation['user2']
@@ -456,6 +456,40 @@ def gamepage():
   else:
     inCollection = True
 
+  # Check if friends own this game
+  # Get list of people who own this game
+  gameOwners = []
+  connection, db = open_db()
+  statement = "SELECT userid FROM collections WHERE gameid = (?)"
+  rows = db.execute(statement, (gameId,)).fetchall()
+  for row in rows:
+    gameOwners.append(row[0])
+
+  # Get friend list and compare to people who own this game
+  friendList = get_friend_list(userId)
+  friends = []
+
+  # For each results from friendList, check if status is 'friends'
+  # filter them into 'friends', getting usernames and user icons as well
+  # Resulting dictionaries will look like {username: 'name', iconPath: 'img-1.png'}
+  for relation in friendList:
+    if relation['status'] == 'friends' and relation['user1'] == userId and relation['user2'] in gameOwners:
+      relation['username'] = get_username(relation['user2'])
+      icon = get_user_icon(relation['username'])
+      relation['iconPath'] = get_icon_path(icon)
+      del relation['status']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+    elif relation['status'] == 'friends' and relation['user2'] == userId and relation['user1'] in gameOwners:
+      relation['username'] = get_username(relation['user1'])
+      icon = get_user_icon(relation['username'])
+      relation['iconPath'] = get_icon_path(icon)
+      del relation['status']
+      del relation['user1']
+      del relation['user2']
+      friends.append(relation)
+
   if request.method == "POST":
     # OPEN CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
     user_connection, user_db = open_db()
@@ -476,17 +510,17 @@ def gamepage():
       user_connection.commit()
       close_db(user_connection, user_db)
 
-      # Add game to gamecache (only if not already there)
+      # Add game to gamecache (if not already there)
       add_gamecache(gameId)
 
-    # Create url for redirecting back to page for refresh
+    # Redirect back to page for refresh
     tempUrl = "/gamepage?id=" + str(gameId)
 
     return redirect(tempUrl)
 
   if request.method == "GET":
 
-    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection)
+    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection, friends=friends)
   
 
 @app.route("/updatefriend", methods=["GET"])

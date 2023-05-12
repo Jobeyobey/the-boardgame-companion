@@ -3,19 +3,18 @@
 Create an app to keep track of your boardgame collection. Also you can keep track of games played, as well as see your friends' collections!
 
 ### TODO
-- Create something that catches API errors
-    - Decorator?
-    - Check for response header and display temporary holding page with timer
 - Refine Everything
     - Display friends owned games on gamepage.html
-    - Playlog overlay
-    - Other styles
-    - Search when no results (boardgames and users)
+        - Some pages not displaying: http://127.0.0.1:5000/gamepage?id=339705
     - Playlog should have most recent game at top
-    - Search needs to have multiple pages when too many results
-    - 'Loading...' when searching, to prevent user refreshing
     - User is currently never auto-logged-out
-    - 'Cancel Request' on friend page border
+    - Styling
+        - Index page tiles
+        - 'Cancel Request' on friend page border
+        - Playlog overlay
+        - Other
+    - 'Loading' not always appearing on search
+
 - Allow import of collection from BGG
     - ... Not sure yet
 
