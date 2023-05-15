@@ -9,13 +9,17 @@
     <h2 class="page-title">Collection</h2>
     <hr class="alt-hr">
     <div class="tiles">
-        {% for game in games %}
-            <a href={{game['gameid']}} class="tile-container">
-                <div class="tile-image-container">
-                    <img class="tile-image" src={{game['thumb']}}>
-                    <h5 class="tile-title">{{game['name']}}</h5>
-                </div>
-            </a>
-        {% endfor %}
+        {% if games %}
+            {% for game in games %}
+                <a href={{game['gameid']}} class="tile-container">
+                    <div class="tile-image-container">
+                        <img class="tile-image" src={{game['thumb']}}>
+                        <h5 class="tile-title">{{game['name']}}</h5>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>You have no games in your collection. Search a boardgame and add it to view it here!</p>
+        {% endif %}
     </div>
 {% endblock %}

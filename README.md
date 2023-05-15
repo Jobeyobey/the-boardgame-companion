@@ -5,9 +5,9 @@ Create an app to keep track of your boardgame collection. Also you can keep trac
 ### TODO
 - Refine Everything
     - User is currently never auto-logged-out
-    - Index page when no friends/collection/playlog
     - Styling
         - Index page tiles
+        - Index page empty page tiles
         - 'Cancel Request' on friend page border
         - Playlog overlay
         - Replace or adapt dice logo: http://127.0.0.1:5000/gamepage?id=339705

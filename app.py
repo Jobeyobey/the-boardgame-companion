@@ -455,7 +455,6 @@ def search():
             "user": user[0],
             "iconPath": get_icon_path(user[1])
           })
-      print(users)
       return render_template("searchusers.html", users=users)
   
   
