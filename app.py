@@ -14,6 +14,7 @@ app = Flask(__name__)
 # Session configuration
 app.config['SECRET_KEY'] = os.urandom(12)
 app.config['SESSION_TYPE'] = "filesystem"
+app.config['SESSION_PERMANENT'] = True
 Session(app)
 
 

@@ -22,6 +22,7 @@ function playOverlayOn(tile) {
 function HTMLconvert(str) {
 str = str.replace(/&amp;#10;/g, "<br>");
 str = str.replace(/&amp;quot;/g, '"');
+str = str.replace(/&amp;rsquo;/g, "'");
 return str;
 }
 
