@@ -10,7 +10,7 @@ function overlayOff() {
 // Playlog overlay
 function playOverlayOn(tile) {
     overlayOn();
-    document.getElementById("overlay-title").innerHTML = tile.name
+    document.getElementById("overlay-game").innerHTML = tile.name
     document.getElementById("overlay-date").innerHTML = tile.time
     document.getElementById("overlay-result").innerHTML = tile.result
     document.getElementById("overlay-note").innerHTML = tile.note

@@ -64,7 +64,9 @@
                 {% for log in user_log %}
                 <a href="/playlog">
                     <div class="component-container">
-                        <img src="{{ log['thumb'] }}">
+                        <div class="img-component-container">
+                            <img src="{{ log['thumb'] }}">
+                        </div>
                         <h5 class="feature-component-title">{{ log['name'] }}</h5>
                         <p class="feature-component-text">{{ log['time'] }}</p>
                         <p class="feature-component-text">Result: {{ log['result'] }}</p>
@@ -74,7 +76,9 @@
                 {% else %}
                 <a href="/playlog">
                     <div class="component-container">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <div class="img-component-container">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        </div>
                         <h5 class="feature-component-title">No plays logged</h5>
                     </div>
                 </a>
@@ -82,6 +86,7 @@
         </div>
     </div>
     <!-- Collection -->
+    <hr>
     <div class="feature-row">
         <h2 class="feature-title">Collection</h2>
         <div class="components">
@@ -89,7 +94,9 @@
                 {% for game in collection %}
                 <a href="{{ game['gameid'] }}">
                     <div class="component-container">
-                        <img src="{{ game['thumb'] }}">
+                        <div class="img-component-container">
+                            <img src="{{ game['thumb'] }}">
+                        </div>
                         <h5 class="feature-component-title">{{ game['name'] }}</h5>
                     </div>
                 </a>
@@ -97,7 +104,9 @@
                 {% else %}
                 <a href="/collection">
                     <div class="component-container">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        <div class="img-component-container">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                        </div>
                         <h5 class="feature-component-title">No games in collection</h5>
                     </div>
                 </a>
@@ -105,22 +114,27 @@
         </div>
     </div>
     <!-- Friends -->
+    <hr>
     <div class="feature-row">
         <h2 class="feature-title">Friends</h2>
         <div class="components">
             {% if friends %}
                 {% for friend in friends %}
+                <a href="/?username={{ friend['username'] }}">
                     <div class="component-container">
-                        <a href="/?username={{ friend['username'] }}">
+                        <div class="img-component-container">
                             <img src="{{ url_for('static', filename=friend['icon']) }}">
-                        </a>
+                        </div>
                         <h5 class="feature-component-title">{{ friend['username'] }}</h5>
                     </div>
+                </a>
                 {% endfor %}
             {% else %}
             <a href="/friends">
                 <div class="component-container">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                    <div class="img-component-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+                    </div>
                     <h5 class="feature-component-title">No friends added</h5>
                 </div>
             </a>
