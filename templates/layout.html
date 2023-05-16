@@ -30,63 +30,65 @@
   </head>
   <body>
     <header>
-      <nav>
-        <!-- Desktop navbar -->
-        <div class="nav-container desktop">
-          <a href="/">
-            <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
-          </a>
-          <div class="navlinks-container">
-              <a class="navlink" href="/">Home</a>
-              <a class="navlink" href="/collection">Collection</a>
-              <a class="navlink" href="/playlog">Play Log</a>
-              <a class="navlink" href="/friends">Friends</a>
+      {% block navbar %}
+        <nav>
+          <!-- Desktop navbar -->
+          <div class="nav-container desktop">
+            <a href="/">
+              <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+            </a>
+            <div class="navlinks-container">
+                <a class="navlink" href="/">Home</a>
+                <a class="navlink" href="/collection">Collection</a>
+                <a class="navlink" href="/playlog">Play Log</a>
+                <a class="navlink" href="/friends">Friends</a>
+            </div>
+            <!-- Search input -->
+            <form class="nav-search" action="/search" method="get">
+                <input type="text" name="query" placeholder="Search..." autocomplete="off">
+                <select name="search-type" id="search-type">
+                  <option value="boardgames">Boardgames</option>
+                  <option value="users">Users</option>
+                </select>
+                <button type="submit">Search</button>
+                <input type="hidden" name="page" value="1">
+            </form>
+              <a class="navlink signout" href="/signout">Sign Out</a>
           </div>
-          <!-- Search input -->
-          <form class="nav-search" action="/search" method="get">
-              <input type="text" name="query" placeholder="Search..." autocomplete="off">
-              <select name="search-type" id="search-type">
-                <option value="boardgames">Boardgames</option>
-                <option value="users">Users</option>
-              </select>
-              <button type="submit">Search</button>
-              <input type="hidden" name="page" value="1">
-          </form>
-            <a class="navlink signout" href="/signout">Sign Out</a>
-        </div>
-        <!-- Mobile Navbar -->
-        <div class="nav-container mobile">
-          <a href="/">
-            <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
-          </a>
-          <!-- Search input -->
-          <form class="nav-search" action="/search" method="get">
-              <input type="text" name="query" placeholder="Search..." autocomplete="off">
-              <select name="search-type" id="search-type">
-                <option value="boardgames">Boardgames</option>
-                <option value="users">Users</option>
-              </select>
-              <button type="submit">Search</button>
-              <input type="hidden" name="page" value="1">
-          </form>
-          <div class="dropdown">
-            <button onclick="dropdownClick()" class="dropbtn">
-              <svg class="dropbtn" fill="#ffffff" viewBox="0 0 100 80" width="40" height="40">
-                <rect class="dropbtn" width="100" height="12" rx="8px"></rect>
-                <rect class="dropbtn" y="30" width="100" height="12" rx="8px"></rect>
-                <rect class="dropbtn" y="60" width="100" height="12" rx="8px"></rect>
-              </svg>
-            </button>
-            <div id="dropdown" class="dropdown-content">
-              <a class="navlink" href="/">Home</a>
-              <a class="navlink" href="/collection">Collection</a>
-              <a class="navlink" href="/playlog">Play Log</a>
-              <a class="navlink" href="/friends">Friends</a>
-              <a class="navlink" href="/signout">Sign Out</a>
+          <!-- Mobile Navbar -->
+          <div class="nav-container mobile">
+            <a href="/">
+              <img id="dice-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/2-Dice-Icon.svg">
+            </a>
+            <!-- Search input -->
+            <form class="nav-search" action="/search" method="get">
+                <input type="text" name="query" placeholder="Search..." autocomplete="off">
+                <select name="search-type" id="search-type">
+                  <option value="boardgames">Boardgames</option>
+                  <option value="users">Users</option>
+                </select>
+                <button type="submit">Search</button>
+                <input type="hidden" name="page" value="1">
+            </form>
+            <div class="dropdown">
+              <button onclick="dropdownClick()" class="dropbtn">
+                <svg class="dropbtn" fill="#ffffff" viewBox="0 0 100 80" width="40" height="40">
+                  <rect class="dropbtn" width="100" height="12" rx="8px"></rect>
+                  <rect class="dropbtn" y="30" width="100" height="12" rx="8px"></rect>
+                  <rect class="dropbtn" y="60" width="100" height="12" rx="8px"></rect>
+                </svg>
+              </button>
+              <div id="dropdown" class="dropdown-content">
+                <a class="navlink" href="/">Home</a>
+                <a class="navlink" href="/collection">Collection</a>
+                <a class="navlink" href="/playlog">Play Log</a>
+                <a class="navlink" href="/friends">Friends</a>
+                <a class="navlink" href="/signout">Sign Out</a>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      {% endblock %}
     </header>
     <main>
       {% with messages = get_flashed_messages() %}

@@ -6,18 +6,23 @@ function overlayOff() {
     document.getElementById("overlay").style.display = "none";
 }
 
+
+// Playlog overlay
 function playOverlayOn(tile) {
     overlayOn();
-    document.getElementById("overlay-title").innerHTML = tile.name
+    document.getElementById("overlay-game").innerHTML = tile.name
     document.getElementById("overlay-date").innerHTML = tile.time
     document.getElementById("overlay-result").innerHTML = tile.result
     document.getElementById("overlay-note").innerHTML = tile.note
+    document.getElementById("tile-id").setAttribute("value", tile.id)
 }
+
 
 // Function to convert HTML unicode characters
 function HTMLconvert(str) {
 str = str.replace(/&amp;#10;/g, "<br>");
 str = str.replace(/&amp;quot;/g, '"');
+str = str.replace(/&amp;rsquo;/g, "'");
 return str;
 }
 
@@ -56,7 +61,6 @@ function sendIconUpdate(input) {
 
 
 // Boardgame search next/prev page
-
 function changePage(action, query, page) {
     searchType = "boardgames";
     if (action == "next") {

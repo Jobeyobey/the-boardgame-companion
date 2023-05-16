@@ -10,14 +10,19 @@
     <div id="overlay">
         <div id="overlay-container" class="overlay-container">
             <form action="/playlog" id="record" method="post">
-                <h2 id="overlay-title" class="overlay-title">Playlog</h2>
+                <h3>Game Played</h3>
+                <p id="overlay-game">dd/mm/yyyy</p>
                 <h3>Date</h3>
                 <p id="overlay-date">dd/mm/yyyy</p>
                 <h3>Result</h3>
                 <p id="overlay-result">Win</p>
                 <h3>Game Notes</h3>
                 <p id="overlay-note">None</p>
-                <button type="button" onclick="overlayOff()" class="button record add btn-strong">Done</button>
+                <button type="button" onclick="overlayOff()" class="button record add btn-strong">Close</button>
+                <form action="/playlog" method="post">
+                    <button type="submit" name="action" value="delete" class="form-button record remove btn-strong">Delete</button>
+                    <input type="hidden" id="tile-id" name="id">
+                </form>
             </form>
         </div>
     </div>
