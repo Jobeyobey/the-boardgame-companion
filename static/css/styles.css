@@ -907,3 +907,23 @@ hr {
 .search-btn:active {
   transform: scale(0.97)
 }
+
+/* Footer */
+
+footer {
+  position: fixed;
+  background-color: #1e1e1e;
+  bottom: 0;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.footer-container p {
+  margin: 0;
+  color: white;
+  text-align: center;
+}
+
+.footer-container p a {
+  color: orange;
+}
