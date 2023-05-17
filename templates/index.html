@@ -2,9 +2,11 @@
 
 {% block title %}Home{% endblock %}
 
-{% block scripts %}
-    <script type="text/javascript" src="./static/json/functions.js"></script>
-{% endblock %}
+{% if own_profile %}
+    {% block scripts %}
+        <script type="text/javascript" src="./static/json/functions.js"></script>
+    {% endblock %}
+{% endif %}
 
 {% block main %}
     <div id="overlay">
@@ -24,7 +26,11 @@
         </div>
     </div>
     <div class="header">
-        <img src="{{ url_for('static', filename=iconpath) }}" class="main-img" onclick="overlayOn()">
+        {% if own_profile %}
+            <img src="{{ url_for('static', filename=iconpath) }}" class="main-img-interactive" onclick="overlayOn()">
+            {% else %}
+            <img src="{{ url_for('static', filename=iconpath) }}" class="main-img">
+        {% endif %}
         <div class="header-info">
             <div class="head-name-container">
                 <h1 class="head-name">{{ username }}</h1>

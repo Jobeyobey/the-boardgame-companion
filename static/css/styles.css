@@ -88,10 +88,17 @@ nav {
   border-radius: 5px 0 0 5px;
 }
 
+select{-webkit-appearance: none;}
+
 .nav-search select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
   background-color: #EFEFEF;
+  color: black;
   float: left;
-  padding: 0.4rem;
+  padding: 0.46rem 1.4rem 0.46rem 0.4rem;
   border: none;
 }
 
@@ -323,13 +330,20 @@ nav {
 }
 
 .main-img {
+  object-fit: contain;
   max-width: 224px;
-  height: 100%;
   margin-right: 2rem;
   border-radius: 5px;
 }
 
-.main-img:hover {
+.main-img-interactive {
+  object-fit: contain;
+  max-width: 224px;
+  margin-right: 2rem;
+  border-radius: 5px;
+}
+
+.main-img-interactive:hover {
   opacity: 90%;
   cursor: pointer;
 }
@@ -465,10 +479,12 @@ hr {
 }
 
 @media (max-width: 560px) {
+  .header-info {
+    width: 240px;
+  }
   .gamepage-info {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    display: block;
+    margin: 0;
   }
   .gamepage-info::before {
     content: none;

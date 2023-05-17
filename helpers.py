@@ -255,3 +255,57 @@ def get_friend_list(userId):
     })
 
   return friendList
+
+
+def calculate_stats(user_collection, gamelog):
+    
+  # Catch empty collection/playlog for gamepages
+  if not user_collection and not gamelog:
+    return []
+
+# Calculate user stats
+  user_stats = {}
+
+  # Collection Size
+  user_stats['totalGames'] = len(user_collection)
+
+  # Game Plays
+  if gamelog:
+    user_stats['gamesPlayed'] = len(gamelog)
+  else:
+    user_stats['gamesPlayed'] = 0
+
+  # Unique Game Plays, wins and losses
+  user_stats['wins'] = 0
+  user_stats['losses'] = 0
+  unique_games = []
+
+  # If user has a playlog
+  if gamelog:
+    for play in gamelog:
+      # Unique Games
+      if play['gameid'] not in unique_games:
+        unique_games.append(play['gameid'])
+      # Wins and Losses
+      if play['result'] == "Win":
+        user_stats['wins'] += 1
+      else:
+        user_stats['losses'] += 1
+  user_stats['uniqueGames'] = len(unique_games)
+    
+  # Win/Loss Ratio - If no games played
+  if user_stats['wins'] == 0 and user_stats['losses'] == 0:
+    user_stats['winRate'] = 0
+  # elif no wins
+  elif user_stats['wins'] == 0:
+    user_stats['winRate'] = 0
+  # elif no losses
+  elif user_stats['losses'] == 0:
+    user_stats['winRate'] = 100
+  # Else, calculate ratio
+  else:
+    user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
+
+  user_stats['lastPlayed'] = gamelog[0]['time']
+
+  return user_stats

@@ -50,9 +50,15 @@
                     </form>
                 </div>
                 <div class="info-right">
-                    <p id="rating" class="header-stats">Total Plays:</p>
-                    <p id="players" class="header-stats">Win Ratio:</p>
-                    <p id="playtime" class="header-stats">Last Played:</p>
+                    {% if stats %}
+                        <p id="rating" class="header-stats">Total Plays: {{ stats['gamesPlayed'] }}</p>
+                        <p id="players" class="header-stats">Win Ratio: {{ stats['winRate'] }}%</p>
+                        <p id="playtime" class="header-stats">Last Played: {{ stats['lastPlayed'] }}</p>
+                    {% else %}
+                        <p id="rating" class="header-stats">Total Plays: N/A</p>
+                        <p id="players" class="header-stats">Win Ratio: N/A</p>
+                        <p id="playtime" class="header-stats">Last Played: N/A</p>
+                    {% endif %}
                     <button onclick="overlayOn()" class="button add btn-strong">Record Session</button>
                 </div>
             </div>
