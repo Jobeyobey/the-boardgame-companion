@@ -329,7 +329,14 @@ nav {
   border-radius: 5px;
 }
 
-.main-img:hover {
+.main-img-interactive {
+  max-width: 224px;
+  height: 100%;
+  margin-right: 2rem;
+  border-radius: 5px;
+}
+
+.main-img-interactive:hover {
   opacity: 90%;
   cursor: pointer;
 }
