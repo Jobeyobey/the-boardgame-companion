@@ -27,11 +27,9 @@ def index():
     # Check if viewing own profile or someone else's, assign username
     if request.args:
       username = request.args['username']
-      own_profile = False
     else:
       # Viewing own profile
       username = session['username']
-      own_profile = True
 
     # Get id, username and icon
     connection, db = open_db()
@@ -47,6 +45,10 @@ def index():
     for row in user_rows:
       userId = row[0]
       userIcon = row[2]
+      if row[1] == session['username']:
+        own_profile = True
+      else:
+        own_profile = False
 
     # Set icon path
     icon_path = get_icon_path(userIcon)
