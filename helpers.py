@@ -197,6 +197,10 @@ def create_user_log(playlog):
     if row[1] not in gameIds:
       gameIds.append(row[1])
 
+  if gameIds == []:
+    user_log = []
+    return user_log
+
   # Create and execute statement to get names and thumbs from gamecache
   connection, db = open_db()
   statement = "SELECT gameid, name, image FROM gamecache WHERE gameid = (?)"
