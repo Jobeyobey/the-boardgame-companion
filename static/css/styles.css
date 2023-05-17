@@ -472,10 +472,12 @@ hr {
 }
 
 @media (max-width: 560px) {
+  .header-info {
+    width: 240px;
+  }
   .gamepage-info {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    display: block;
+    margin: 0;
   }
   .gamepage-info::before {
     content: none;

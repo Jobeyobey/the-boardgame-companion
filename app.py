@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  make_response
 from flask_session import Session
-from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list, get_icon_path, get_user_icon
+from helpers import login_required, open_db, close_db, validate_username, validate_password, get_user_id, get_username, add_gamecache, get_user_collection, fetch_game_cache, get_user_playlog, create_user_log, get_friend_list, get_icon_path, get_user_icon, calculate_stats
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
@@ -115,49 +115,8 @@ def index():
           "username": row[0],
           "icon": icon
           })
-
-    # Calculate user stats
-    user_stats = {}
-
-    # Collection Size
-    user_stats['totalGames'] = len(user_collection)
-
-    # Game Plays
-    if playlog:
-      user_stats['gamesPlayed'] = len(user_log)
-    else:
-      user_stats['gamesPlayed'] = 0
-
-    # Unique Game Plays, wins and losses
-    user_stats['wins'] = 0
-    user_stats['losses'] = 0
-    unique_games = []
-
-    # If user has a playlog
-    if user_log:
-      for play in user_log:
-        # Unique Games
-        if play['gameid'] not in unique_games:
-          unique_games.append(play['gameid'])
-        # Wins and Losses
-        if play['result'] == "Win":
-          user_stats['wins'] += 1
-        else:
-          user_stats['losses'] += 1
-    user_stats['uniqueGames'] = len(unique_games)
-      
-    # Win/Loss Ratio - If no games played
-    if user_stats['wins'] == 0 and user_stats['losses'] == 0:
-      user_stats['winRate'] = 0
-    # elif no wins
-    elif user_stats['wins'] == 0:
-      user_stats['winRate'] = 0
-    # elif no losses
-    elif user_stats['losses'] == 0:
-      user_stats['winRate'] = 100
-    # Else, calculate ratio
-    else:
-      user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
+        
+    user_stats = calculate_stats(user_collection, user_log)
 
     return render_template("index.html", own_profile=own_profile, username=username, iconpath=icon_path, userstats=user_stats, collection=collection, user_log=user_log, relation=relation, friends=friends)
 
@@ -516,6 +475,15 @@ def gamepage():
       del relation['user2']
       friends.append(relation)
 
+  # Calculate user stats for this game
+  playlog = get_user_playlog(userId)
+  user_playlog = create_user_log(playlog)
+  game_plays = []
+  for row in user_playlog:
+    if row['gameid'] == gameId:
+      game_plays.append(row)
+  stats = calculate_stats([], game_plays)
+
   if request.method == "POST":
     # OPEN CONNECTIONS FOR ADD/REMOVE GAME FROM USER COLLECTION
     user_connection, user_db = open_db()
@@ -546,7 +514,7 @@ def gamepage():
 
   if request.method == "GET":
 
-    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection, friends=friends)
+    return render_template("gamepage.html", gameId=gameId, inCollection=inCollection, friends=friends, stats=stats)
   
 
 @app.route("/updatefriend", methods=["GET"])
