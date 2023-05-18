@@ -212,12 +212,14 @@ select{-webkit-appearance: none;}
 @media (max-width: 768px) {
   .page-container {
     padding: 2rem;
+    padding-bottom: 2.5rem;
   }
 }
 
 @media (max-width: 400px) {
   .page-container {
     padding: 1rem;
+    padding-bottom: 2.5rem;
   }
 }
 
@@ -469,6 +471,9 @@ hr {
     max-width: 15rem;
     margin: auto;
   }
+  .main-img-interactive {
+    margin-right: 0;
+  }
   .head-username {
     text-align: center;
   }
@@ -570,7 +575,7 @@ hr {
 
 .page-content-container {
   margin-top: 1rem;
-  padding-bottom: 2rem;
+  padding-bottom: 0.5rem;
 }
 
 .page-title {
