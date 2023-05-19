@@ -1,7 +1,18 @@
 # CS50 Final Project - The Boardgame Companion
-#### Video Demo:  <URL HERE>
+#### Video Demo:  <https://youtu.be/1EMgKK6fADw>
+#### Description:
+
 <br>
+
 I wanted to create an app to keep track of your boardgame collection. As well as this, I thought it'd be nice if you could also keep track of your games played, as well as being able to see what games your friends have in their collections.
+
+<br>
+
+**Languages/Frameworks used:**
+- Python
+- Flask
+- SQLite
+- HTML/CSS/Javascript
 
 ---
 ## User Accounts
