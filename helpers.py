@@ -310,6 +310,9 @@ def calculate_stats(user_collection, gamelog):
   else:
     user_stats['winRate'] = int((user_stats['wins'] / (user_stats['wins'] + user_stats['losses'])) * 100)
 
-  user_stats['lastPlayed'] = gamelog[0]['time']
+  if gamelog:
+    user_stats['lastPlayed'] = gamelog[0]['time']
+  else:
+    user_stats['lastPlayed'] = 0
 
   return user_stats
