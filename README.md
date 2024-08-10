@@ -1,4 +1,4 @@
-# CS50 Final Project - The Boardgame Companion
+# The Boardgame Companion
 #### Video Demo:  <https://youtu.be/1EMgKK6fADw>
 #### Site Link: http://jobeyobey.pythonanywhere.com/login
 #### Description:
